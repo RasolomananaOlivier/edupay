@@ -4,6 +4,8 @@
 package repository.student;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -25,8 +27,30 @@ public class StudentRepositoryImpl implements StudentRepository {
 
 	@Override
 	public void addStudent(Student student) {
-		// TODO Auto-generated method stub
+	    try {
+	        String sql =  "INSERT INTO \"Student\" "
+	        		+ "(\"id\", \"name\", \"gender\", \"birthDate\", \"email\", \"facultyId\", \"levelId\", \"academicSessionId\", \"createdAt\", \"updatedAt\") "
+	        		+ "VALUES (?, ?, CAST(?::text AS \"public\".\"Gender\"), ?, ?, ?, ?, ?, ?, ?)";
 
+
+	        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+	        preparedStatement.setString(1, student.getId());
+	        preparedStatement.setString(2, student.getName());
+	        preparedStatement.setString(3, student.getGender().toString());
+	        preparedStatement.setDate(4, new Date(student.getBirthDate().getTime())); // Convert java.util.Date to java.sql.Date
+	        preparedStatement.setString(5, student.getEmail());
+	        preparedStatement.setInt(6, student.getFacultyId());
+	        preparedStatement.setInt(7, student.getLevelId());
+	        preparedStatement.setInt(8, student.getAcademicSessionId());
+	        preparedStatement.setDate(9, new Date(student.getCreatedAt().getTime()));
+	        preparedStatement.setDate(10, new Date(student.getUpdatedAt().getTime()));
+
+	        preparedStatement.executeUpdate();
+	        
+	        System.out.println("student inserted");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } 
 	}
 
 	@Override
@@ -50,7 +74,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 			ResultSet resultSet = st.executeQuery(sql);
 			
 			while (resultSet.next()) {
-				Student student = Student.formResultSet(resultSet);
+				Student student = Student.fromResultSet(resultSet);
 				
 				students.add(student);
 			}

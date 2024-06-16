@@ -33,7 +33,7 @@ List<Student> students = (List<Student>) request.getAttribute("students");
 			<div class="mt-1 text-slate-600">Retrouver ici la liste des
 				étudiants</div>
 
-			<a href="create.jsp"
+			<a href="students/new"
 				class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Nouvel
 				étudiant</a>
 		</div>
@@ -44,7 +44,7 @@ List<Student> students = (List<Student>) request.getAttribute("students");
 					class="bg-gray block w-full rounded-full border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 					placeholder="Entrez le nom d'un étudiant" required />
 				<div>
-					<a href="create.jsp"
+					<a href=""
 						class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Rechercher</a>
 				</div>
 			</div>

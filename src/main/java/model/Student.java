@@ -2,8 +2,11 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import jakarta.servlet.http.HttpServletRequest;
 import util.Gender;
 
 public class Student {
@@ -125,7 +128,7 @@ public class Student {
 		this.faculty = faculty;
 	}
 
-	public static Student formResultSet(ResultSet resultSet) {
+	public static Student fromResultSet(ResultSet resultSet) {
 		Student student = new Student();
 
 		try {
@@ -154,6 +157,58 @@ public class Student {
 			e.printStackTrace();
 		}
 
+		return student;
+	}
+	
+	public static Student fromRequest(HttpServletRequest request) {
+		Student student = new Student();
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+	    // Extract parameters from request
+	    student.setId(request.getParameter("id"));
+	    student.setName(request.getParameter("name"));
+
+	    // Convert gender string to Gender enum
+	    String genderString = request.getParameter("gender");
+	    System.out.println(genderString);
+	    if (genderString != null) {
+	        student.setGender(Gender.valueOf(genderString.toUpperCase()));
+	    }
+
+	    // Convert birth date string to Date
+	    String birthDateString = request.getParameter("birthDate");
+	    if (birthDateString != null) {
+	        try {
+	            student.setBirthDate(dateFormat.parse(birthDateString));
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    student.setEmail(request.getParameter("email"));
+
+	    // Convert string parameters to Integer
+	    String facultyIdString = request.getParameter("faculty");
+	    if (facultyIdString != null) {
+	        student.setFacultyId(Integer.valueOf(facultyIdString));
+	    }
+
+	    String levelIdString = request.getParameter("level");
+	    if (levelIdString != null) {
+	        student.setLevelId(Integer.valueOf(levelIdString));
+	    }
+
+	    String academicSessionIdString = request.getParameter("academicSession");
+	    if (academicSessionIdString != null) {
+	        student.setAcademicSessionId(Integer.valueOf(academicSessionIdString));
+	    }
+
+	    // Set createdAt and updatedAt dates to current date
+	    java.util.Date currentDate = new java.util.Date();
+	    student.setCreatedAt(currentDate);
+	    student.setUpdatedAt(currentDate);
+		
 		return student;
 	}
 }
