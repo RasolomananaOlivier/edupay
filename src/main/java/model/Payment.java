@@ -1,7 +1,12 @@
 package model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import util.Gender;
 
 public class Payment {
 	private String id;
@@ -13,8 +18,15 @@ public class Payment {
 	private Date updatedAt;
 	private List<PaymentItem> paymentItems;
 
-	public Payment(String id, String studentId, Student student, int academicSessionId, AcademicSession academicSession,
-			Date createdAt, Date updatedAt, List<PaymentItem> paymentItems) {
+	public Payment(String id,
+			String studentId,
+			Student student,
+			int academicSessionId,
+			AcademicSession academicSession,
+
+			Date createdAt,
+			Date updatedAt,
+			List<PaymentItem> paymentItems) {
 		super();
 		this.id = id;
 		this.studentId = studentId;
@@ -88,5 +100,41 @@ public class Payment {
 
 	public void setPaymentItems(List<PaymentItem> paymentItems) {
 		this.paymentItems = paymentItems;
+	}
+
+	public static Payment fromResultSet(ResultSet resultSet) throws SQLException {
+		Payment payment = new Payment(
+				resultSet.getString("Payment.id"),
+				resultSet.getString("Payment.studentId"),
+
+				new Student(
+						resultSet.getString("Student.id"),
+						resultSet.getString("Student.name"),
+						Gender.valueOf(resultSet.getString("Student.gender")),
+						resultSet.getDate("Student.birthDate"),
+						resultSet.getString("Student.email"),
+						resultSet.getInt("Student.facultyId"),
+						resultSet.getInt("Student.levelId"),
+						resultSet.getInt("Student.academicSessionId"),
+						resultSet.getDate("Student.createdAt"),
+						resultSet.getDate("Student.updatedAt"),
+						new Level(
+								resultSet.getInt("Student.Level.id"),
+								resultSet.getString("Student.Level.name")),
+						new AcademicSession(
+								resultSet.getInt("Student.AcademicSession.id"),
+								resultSet.getInt("Student.AcademicSession.year")),
+						new Faculty(
+								resultSet.getInt("Student.Faculty.id"),
+								resultSet.getString("Student.Faculty.name"))),
+				resultSet.getInt("Payment.academicSessionId"),
+				new AcademicSession(
+						resultSet.getInt("AcademicSession.id"),
+						resultSet.getInt("AcademicSession.year")),
+				resultSet.getDate("Payment.createdAt"),
+				resultSet.getDate("Payment.updatedAt"),
+				new ArrayList<PaymentItem>());
+
+		return payment;
 	}
 }
