@@ -1,0 +1,74 @@
+# Eclipse specific files
+.project
+.classpath
+.settings/
+
+# Maven specific files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Java specific files
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Eclipse configuration files
+/.classpath
+/.project
+/.settings/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled files and folders
+bin/
+build/
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*.orig
+
+# Ignore IDE specific files
+*.iml
+*.ipr
+*.iws
+
+# Ignore package files
+*.jar
+*.war
+*.ear
+
+# Ignore logs
+*.log
+
+# Ignore IntelliJ IDEA specific files
+.idea/
+*.iml
+*.ipr
+
+# Ignore NetBeans specific files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore Visual Studio Code specific files
+.vscode/
+
+# Ignore other IDE specific files
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+.temp
+*.tmp
