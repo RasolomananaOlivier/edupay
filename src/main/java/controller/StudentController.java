@@ -49,8 +49,6 @@ public class StudentController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		
 		String action = request.getPathInfo();
 
         if (action == null) {
@@ -118,8 +116,19 @@ public class StudentController extends HttpServlet {
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	Student student = studentRepository.getStudent(request.getParameter("studentId"));
+    	
+    	List<Level> levels = levelRepository.getLevels();
+    	List<Faculty> faculties = facultyRepository.getFaculties();
+    	List<AcademicSession> sessions = sessionRepository.getSessions();
+    	
+    	request.setAttribute("levels", levels);
+    	request.setAttribute("faculties", faculties);
+    	request.setAttribute("academicSessions", sessions);
+    	
+    	request.setAttribute("student", student);
         // Logic to show edit form
-        request.getRequestDispatcher("/students/edit.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/students/edit.jsp").forward(request, response);
     }
 
     private void insertStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -131,12 +140,16 @@ public class StudentController extends HttpServlet {
     }
 
     private void updateStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Logic to update student
-        response.sendRedirect("/students");
+    	Student student = Student.fromRequest(request);
+    	
+    	studentRepository.updateStudent(student);
+
+    	response.sendRedirect(request.getContextPath() + "/students");
     }
 
     private void deleteStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Logic to delete student
-        response.sendRedirect("/students");
+    	studentRepository.deleteStudent(request.getParameter("studentId"));
+    	
+    	response.sendRedirect(request.getContextPath() + "/students");
     }
 }
