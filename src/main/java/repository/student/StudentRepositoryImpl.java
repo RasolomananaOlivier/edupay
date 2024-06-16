@@ -7,9 +7,12 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import database.Database;
 import model.Student;
@@ -81,30 +84,62 @@ public class StudentRepositoryImpl implements StudentRepository {
 	}
 
 	@Override
-	public List<Student> getAllStudents() {
-		List<Student> students = new ArrayList<Student>();
-		
-		try {
-			String sql = "SELECT * FROM \"Student\" "
-					+ "INNER JOIN \"Level\" ON \"Student\".\"levelId\" = \"Level\".\"id\" "
+	public List<Student> getAllStudents(String name, Boolean isMinor, Integer levelId, Integer facultyId) {
+		 List<Student> students = new ArrayList<>();
+
+	        StringBuilder sql = new StringBuilder("SELECT * FROM \"Student\" "
+	        		+ "INNER JOIN \"Level\" ON \"Student\".\"levelId\" = \"Level\".\"id\" "
 					+ "INNER JOIN \"AcademicSession\" ON \"Student\".\"academicSessionId\" = \"AcademicSession\".\"id\" "
-					+ "INNER JOIN \"Faculty\" ON \"Student\".\"facultyId\" = \"Faculty\".\"id\"";
-			
-			Statement st = connection.createStatement();
-			
-			ResultSet resultSet = st.executeQuery(sql);
-			
-			while (resultSet.next()) {
-				Student student = Student.fromResultSet(resultSet);
-				
-				students.add(student);
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		return students;
+					+ "INNER JOIN \"Faculty\" ON \"Student\".\"facultyId\" = \"Faculty\".\"id\" "
+	        		+ "WHERE 1=1");
+	        
+	        if (name != null && !name.isEmpty()) {
+	            sql.append(" AND \"Student\".\"name\" ILIKE ?");
+	        }
+	        if (isMinor != null) {
+	            sql.append(" AND \"birthDate\" > ?");
+	        }
+	        if (levelId != null) {
+	            sql.append(" AND \"levelId\" = ?");
+	        }
+	        if (facultyId != null) {
+	            sql.append(" AND \"facultyId\" = ?");
+	        }
+
+	        try {
+	        	PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+
+	            int parameterIndex = 1;
+
+	            if (name != null && !name.isEmpty()) {
+	                preparedStatement.setString(parameterIndex++, "%" + name + "%");
+	            }
+	            if (isMinor != null) {
+	                // Calculate the date 18 years ago from today
+	                Calendar calendar = Calendar.getInstance();
+	                calendar.add(Calendar.YEAR, -18);
+	                Date minorDateThreshold = new Date(calendar.getTimeInMillis());
+	                preparedStatement.setDate(parameterIndex++, minorDateThreshold);
+	            }
+	            if (levelId != null) {
+	                preparedStatement.setInt(parameterIndex++, levelId);
+	            }
+	            if (facultyId != null) {
+	                preparedStatement.setInt(parameterIndex++, facultyId);
+	            }
+
+	            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	                while (resultSet.next()) {
+	                    Student student = Student.fromResultSet(resultSet);
+	                    students.add(student);
+	                }
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return students;
 	}
 
 	@Override
@@ -160,5 +195,4 @@ public class StudentRepositoryImpl implements StudentRepository {
 	        e.printStackTrace();
 	    }
 	}
-
 }
