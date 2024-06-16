@@ -8,11 +8,11 @@ public interface StudentRepository {
 
 	void addStudent(Student student);
 
-	Student getStudent(int id);
+	Student getStudent(String id);
 
 	List<Student> getAllStudents();
 
 	void updateStudent(Student student);
 
-	void deleteStudent(int id);
+	void deleteStudent(String id);
 }

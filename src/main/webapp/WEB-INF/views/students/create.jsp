@@ -1,5 +1,15 @@
+<%@page import="model.AcademicSession"%>
+<%@page import="model.Faculty"%>
+<%@page import="model.Level"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%
+List<Level> levels = (List<Level>) request.getAttribute("levels");
+List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
+List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("academicSessions");
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,60 +22,58 @@
 </head>
 <body>
 
-
-
 	<main class="px-3 py-5 sm:px-40 md:px-60 lg:px-80">
 		<h1 class="text-3xl font-medium">Ajouter un étudiant</h1>
 		<p class="mb-5 text-slate-600">Veuillez remplir les champs
 			suivants pour ajouter un étudiant</p>
 
-		<form>
+		<form action="store" method="post">
 			<div class="mb-6 flex flex-col gap-5">
 				<div>
-					<label for="first_name"
+					<label for="id"
 						class="mb-2 block text-sm font-medium text-gray-900">N°
-						matricule</label> <input type="text" id="first_name"
+						matricule</label> <input type="text" id="id" name="id"
 						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 						placeholder="2413" required />
 				</div>
 
 				<div>
-					<label for="first_name"
+					<label for="name"
 						class="mb-2 block text-sm font-medium text-gray-900">Nom</label> <input
-						type="text" id="first_name"
+						type="text" id="name" name="name"
 						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 						placeholder="John Doe" required />
 				</div>
 
 				<div>
-					<label for="first_name"
+					<label for="email"
 						class="mb-2 block text-sm font-medium text-gray-900">Email</label>
-					<input type="email" id="first_name"
+					<input type="email" id="email" name="email"
 						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="John Doe" required />
+						placeholder="john@gmail.com" required />
 				</div>
 
 				<div>
-					<label for="first_name"
+					<label for="date"
 						class="mb-2 block text-sm font-medium text-gray-900">Date
-						de naissance</label> <input type="date" id="first_name"
+						de naissance</label> <input type="date" id="date" name="birthDate"
 						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="John Doe" required />
+						required />
 				</div>
 
 				<div>
 					<div class="mb-2">Genre</div>
 					<div class="flex items-center gap-4">
 						<div class="flex items-center">
-							<input checked id="default-radio-1" type="radio" value=""
-								name="default-radio"
+							<input checked id="default-radio-1" name="gender" type="radio"
+								value="MALE" name="default-radio"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-1"
 								class="ms-2 text-sm font-medium text-gray-900">Homme</label>
 						</div>
 						<div class="flex items-center">
-							<input id="default-radio-2" type="radio" value=""
-								name="default-radio"
+							<input id="default-radio-2" name="gender" type="radio"
+								value="FEMALE" name="default-radio"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-2"
 								class="ms-2 text-sm font-medium text-gray-900">Femme</label>
@@ -76,33 +84,61 @@
 				<div>
 					<label for="first_name"
 						class="mb-2 block text-sm font-medium text-gray-900">Institution</label>
-					<input type="text" id="first_name"
-						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="John Doe" required />
+					<select id="countries" name="faculty"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+
+						<%
+						for (Faculty faculty : faculties) {
+						%>
+						<option value="<%=faculty.getId()%>">
+							<%=faculty.getName()%>
+						</option>
+						<%
+						}
+						%>
+					</select>
 				</div>
 
 				<div>
-					<label for="first_name"
+					<label for="level"
 						class="mb-2 block text-sm font-medium text-gray-900">Niveau</label>
-					<input type="text" id="first_name"
-						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="John Doe" required />
+					<select id="countries" name="level"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+						<%
+						for (Level level : levels) {
+						%>
+						<option value="<%=level.getId()%>">
+							<%=level.getName()%>
+						</option>
+						<%
+						}
+						%>
+					</select>
 				</div>
 
 				<div>
 					<label for="first_name"
 						class="mb-2 block text-sm font-medium text-gray-900">Année
-						universitaire</label> <input type="text" id="first_name"
-						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="John Doe" required />
+						universitaire</label> <select id="countries" name="academicSession"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+						<%
+						for (AcademicSession academicSession : sessions) {
+						%>
+						<option value="<%=academicSession.getId()%>">
+							<%=academicSession.getYear()%>
+						</option>
+						<%
+						}
+						%>
+					</select>
 				</div>
 			</div>
 
 			<div class="flex justify-end">
-			<button type="submit"
-				class="w-full rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Confirmer</button>
+				<button type="submit"
+					class="w-full rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Confirmer</button>
 			</div>
-			
+
 		</form>
 	</main>
 

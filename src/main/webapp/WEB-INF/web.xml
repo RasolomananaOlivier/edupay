@@ -27,6 +27,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>StudentController</servlet-name>
-    <url-pattern>/students</url-pattern>
+    <url-pattern>/students/*</url-pattern>
   </servlet-mapping>
 </web-app>
