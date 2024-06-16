@@ -54,9 +54,30 @@ public class StudentRepositoryImpl implements StudentRepository {
 	}
 
 	@Override
-	public Student getStudent(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Student getStudent(String id) {
+		Student student = null;
+		
+		try {
+			String sql = "SELECT * FROM \"Student\""
+					+ "INNER JOIN \"Level\" ON \"Student\".\"levelId\" = \"Level\".\"id\" "
+					+ "INNER JOIN \"AcademicSession\" ON \"Student\".\"academicSessionId\" = \"AcademicSession\".\"id\" "
+					+ "INNER JOIN \"Faculty\" ON \"Student\".\"facultyId\" = \"Faculty\".\"id\" "
+					+ "WHERE \"Student\".\"id\" = ? ";
+			
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setString(1, id);
+			
+			ResultSet resultSet = st.executeQuery();
+			
+			while (resultSet.next()) {
+				student = Student.fromResultSet(resultSet);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return student;
 	}
 
 	@Override
@@ -88,14 +109,56 @@ public class StudentRepositoryImpl implements StudentRepository {
 
 	@Override
 	public void updateStudent(Student student) {
-		// TODO Auto-generated method stub
+	    try {
+	        String sql = "UPDATE \"Student\" SET "
+	                   + "\"name\" = ?, "
+	                   + "\"gender\" = CAST(?::text AS \"public\".\"Gender\"), "
+	                   + "\"birthDate\" = ?, "
+	                   + "\"email\" = ?, "
+	                   + "\"facultyId\" = ?, "
+	                   + "\"levelId\" = ?, "
+	                   + "\"academicSessionId\" = ?, "
+	                   + "\"updatedAt\" = ? "
+	                   + "WHERE \"id\" = ?";
 
+	        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+	        preparedStatement.setString(1, student.getName());
+	        preparedStatement.setString(2, student.getGender().toString());
+	        preparedStatement.setDate(3, new Date(student.getBirthDate().getTime())); // Convert java.util.Date to java.sql.Date
+	        preparedStatement.setString(4, student.getEmail());
+	        preparedStatement.setInt(5, student.getFacultyId());
+	        preparedStatement.setInt(6, student.getLevelId());
+	        preparedStatement.setInt(7, student.getAcademicSessionId());
+	        preparedStatement.setDate(8, new Date(System.currentTimeMillis()));
+	        preparedStatement.setString(9, student.getId());
+
+	        preparedStatement.executeUpdate();
+	        
+	        System.out.println("Student updated");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
-	@Override
-	public void deleteStudent(int id) {
-		// TODO Auto-generated method stub
 
+	@Override
+	public void deleteStudent(String id) {
+		try {
+	        String sql = "DELETE FROM \"Student\" WHERE \"id\" = ?";
+
+	        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+	        preparedStatement.setString(1, id);
+
+	        int rowsAffected = preparedStatement.executeUpdate();
+
+	        if (rowsAffected > 0) {
+	            System.out.println("Student deleted");
+	        } else {
+	            System.out.println("No student found with the provided ID");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 }

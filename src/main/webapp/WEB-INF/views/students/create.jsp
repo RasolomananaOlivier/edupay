@@ -22,8 +22,6 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 </head>
 <body>
 
-
-
 	<main class="px-3 py-5 sm:px-40 md:px-60 lg:px-80">
 		<h1 class="text-3xl font-medium">Ajouter un étudiant</h1>
 		<p class="mb-5 text-slate-600">Veuillez remplir les champs
