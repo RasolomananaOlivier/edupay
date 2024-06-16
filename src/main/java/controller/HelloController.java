@@ -5,38 +5,28 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Student;
-import repository.student.StudentRepository;
-import repository.student.StudentRepositoryImpl;
-
 import java.io.IOException;
-import java.util.List;
 
 /**
- * Servlet implementation class StudentController
+ * Servlet implementation class HelloController
  */
-public class StudentController extends HttpServlet {
-private static final long serialVersionUID = 1L;
-	
-	private StudentRepository repository;
+public class HelloController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public StudentController() {
+    public HelloController() {
         super();
-        
-        repository = new StudentRepositoryImpl();
+        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Student> students = repository.getAllStudents();
-		
-		request.setAttribute("students", students);
-		request.getRequestDispatcher("/WEB-INF/views/students/index.jsp").forward(request, response);;
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -46,4 +36,5 @@ private static final long serialVersionUID = 1L;
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+
 }
