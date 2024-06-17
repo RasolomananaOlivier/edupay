@@ -138,6 +138,7 @@ public class StudentController extends HttpServlet {
 
 		request.setAttribute("levels", levels);
 		request.setAttribute("faculties", faculties);
+		request.setAttribute("academicSessions", sessions);
 
 		request.getRequestDispatcher("/WEB-INF/views/students/create.jsp").forward(request, response);
 	}
