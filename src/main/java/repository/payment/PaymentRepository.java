@@ -7,7 +7,7 @@ import model.Payment;
 public interface PaymentRepository {
 	void addOne(Payment payment);
 
-	Payment getById(int id);
+	Payment getById(String id);
 
 	List<Payment> getMany();
 

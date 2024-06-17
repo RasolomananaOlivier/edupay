@@ -62,7 +62,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 			""";
 
 	private static String orderSQL = """
-			ORDER BY "public"."Payment"."updatedAt" DESC;
+			ORDER BY "public"."Payment"."updatedAt" DESC
 			""";
 
 	@Override
@@ -72,25 +72,39 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 	}
 
 	@Override
-	public Payment getById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Payment getById(String id) {
+		Payment result = null;
+		try {
+			String where = """
+					WHERE "public"."Payment"."id" = ? LIMIT 1
+					""";
+			String sql = selectSQL + where;
+
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setString(1, id);
+
+			ResultSet resultSet = st.executeQuery();
+
+			List<Payment> payments = getPaymentsFromResultSet(resultSet);
+
+			if (!payments.isEmpty()) {
+				result = payments.get(0);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
-	@Override
-	public List<Payment> getMany() {
+	private List<Payment> getPaymentsFromResultSet(ResultSet resultSet) {
 		List<Payment> result = new ArrayList<>();
 
 		try {
-			System.out.println("getMany");
-
-			String sql = selectSQL + orderSQL;
 
 			Map<String, Payment> map = new HashMap<>();
-
-			PreparedStatement st = connection.prepareStatement(sql);
-
-			ResultSet resultSet = st.executeQuery();
 
 			while (resultSet.next()) {
 				Payment payment = Payment.fromResultSet(resultSet);
@@ -111,6 +125,28 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 			}
 
 			result = new ArrayList<>(map.values());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<Payment> getMany() {
+		List<Payment> result = new ArrayList<>();
+
+		try {
+
+			String sql = selectSQL + orderSQL;
+
+			PreparedStatement st = connection.prepareStatement(sql);
+
+			ResultSet resultSet = st.executeQuery();
+
+			result = getPaymentsFromResultSet(resultSet);
 
 		} catch (Exception e) {
 			e.printStackTrace();

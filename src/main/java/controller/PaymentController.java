@@ -113,8 +113,22 @@ public class PaymentController extends HttpServlet {
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Payment payment =
-		// paymentRepository.getPayment(request.getParameter("paymentId"));
+
+		String paymentId = request.getParameter("paymentId");
+		System.out.println(paymentId);
+
+		if (paymentId == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+
+		Payment payment = paymentRepository.getById(paymentId);
+		request.setAttribute("payment", payment);
+
+		if (payment == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 
 		// List<Level> levels = levelRepository.getLevels();
 		// List<Faculty> faculties = facultyRepository.getFaculties();
@@ -125,9 +139,8 @@ public class PaymentController extends HttpServlet {
 		// request.setAttribute("academicSessions", sessions);
 
 		// request.setAttribute("payment", payment);
-		// // Logic to show edit form
-		// request.getRequestDispatcher("/WEB-INF/views/payments/edit.jsp").forward(request,
-		// response);
+		// Logic to show edit form
+		request.getRequestDispatcher("/WEB-INF/views/payments/edit.jsp").forward(request, response);
 	}
 
 	private void insertPayment(HttpServletRequest request, HttpServletResponse response)
