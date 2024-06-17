@@ -14,18 +14,30 @@ public class Payment {
 	private Student student;
 	private int academicSessionId;
 	private AcademicSession academicSession;
+	private int levelId;
+	private Level level;
 	private Date createdAt;
 	private Date updatedAt;
 	private List<PaymentItem> paymentItems;
 
+	public Payment() {
+		super();
+	}
+
 	public Payment(String id,
+
 			String studentId,
 			Student student,
+
 			int academicSessionId,
 			AcademicSession academicSession,
 
+			int levelId,
+			Level level,
+
 			Date createdAt,
 			Date updatedAt,
+
 			List<PaymentItem> paymentItems) {
 		super();
 		this.id = id;
@@ -33,6 +45,8 @@ public class Payment {
 		this.student = student;
 		this.academicSessionId = academicSessionId;
 		this.academicSession = academicSession;
+		this.levelId = levelId;
+		this.level = level;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 		this.paymentItems = paymentItems;
@@ -78,6 +92,22 @@ public class Payment {
 		this.academicSession = academicSession;
 	}
 
+	public int getLevelId() {
+		return levelId;
+	}
+
+	public void setLevelId(int levelId) {
+		this.levelId = levelId;
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -105,8 +135,8 @@ public class Payment {
 	public static Payment fromResultSet(ResultSet resultSet) throws SQLException {
 		Payment payment = new Payment(
 				resultSet.getString("Payment.id"),
-				resultSet.getString("Payment.studentId"),
 
+				resultSet.getString("Payment.studentId"),
 				new Student(
 						resultSet.getString("Student.id"),
 						resultSet.getString("Student.name"),
@@ -127,12 +157,18 @@ public class Payment {
 						new Faculty(
 								resultSet.getInt("Student.Faculty.id"),
 								resultSet.getString("Student.Faculty.name"))),
+
 				resultSet.getInt("Payment.academicSessionId"),
 				new AcademicSession(
 						resultSet.getInt("AcademicSession.id"),
 						resultSet.getInt("AcademicSession.year")),
+
+				resultSet.getInt("Level.id"),
+				new Level(resultSet.getInt("Level.id"), resultSet.getString("Level.name")),
+
 				resultSet.getDate("Payment.createdAt"),
 				resultSet.getDate("Payment.updatedAt"),
+
 				new ArrayList<PaymentItem>());
 
 		return payment;

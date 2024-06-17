@@ -1,5 +1,5 @@
 <%@page import="model.PaymentItem"%>
-<%@page import="model.Payment"%>
+<%@page import="model.Student"%>
 <%@page import="util.PaymentPeriod"%>
 <%@page import="model.AcademicSession"%>
 <%@page import="java.util.List"%>
@@ -7,9 +7,8 @@
 	pageEncoding="UTF-8"%>
 
 <%
-List<Payment> students = (List<Payment>) request.getAttribute("students");
-List<PaymentPeriod> paymentPeriods = (List<PaymentPeriod>) request.getAttribute("paymentPeriods");
-List<AcademicSession> academicSessions = (List<AcademicSession>) request.getAttribute("academicSessions");
+Student student = (Student) request.getAttribute("student");
+List<PaymentPeriod> disabledPaymentPeriods = (List<PaymentPeriod>) request.getAttribute("disabledPaymentPeriods");
 %>
 
 <!DOCTYPE html>
@@ -19,14 +18,25 @@ List<AcademicSession> academicSessions = (List<AcademicSession>) request.getAttr
 <title>Insert title here</title>
 </head>
 <body>
+    <p><%= student.toString() %></p>
+
     <p>
-    <%= students.toString() %>
+        <%= disabledPaymentPeriods.toString() %>
     </p>
-    <p>
-    <%= paymentPeriods.toString() %>
-    </p>
-    <p>
-    <%= academicSessions.toString() %>
-    </p>
+
+    <form method="POST" action="<%= request.getContextPath() + "/payments/store" %>">
+        <input type="hidden" name="studentId" value="<%= student.getId() %>" />
+        
+        <% for (PaymentPeriod paymentPeriod : PaymentPeriod.values() ) { %>
+            <% if (disabledPaymentPeriods.contains(paymentPeriod)) { %>
+                <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() %>" name="disabledPaymentPeriods" value="<%= paymentPeriod %>" checked="" disabled="">
+            <% } else { %>
+                <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() %>" name="paymentPeriods" value="<%= paymentPeriod %>">
+            <% } %>
+            <label for="PaymentPeriod.<%= paymentPeriod.toString() %>"><%= paymentPeriod.getLabel() %></label><br>
+        <% } %>
+
+        <input type="submit" value="Create" />
+    </form>
 </body>
 </html>

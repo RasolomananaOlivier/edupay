@@ -13,5 +13,5 @@ public interface PaymentRepository {
 
 	void updateOne(Payment payment);
 
-	void deleteOne(int id);
+	void deleteOne(String id);
 }

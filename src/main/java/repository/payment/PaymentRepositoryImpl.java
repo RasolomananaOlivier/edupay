@@ -67,8 +67,33 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public void addOne(Payment payment) {
-		// TODO Auto-generated method stub
+		String sql = """
+				INSERT INTO "public"."Payment" (
+				        "id",
+				        "studentId",
+				        "levelId",
+				        "academicSessionId",
+				        "createdAt",
+				        "updatedAt"
+				    )
+				VALUES (?, ?, ?, ?, ?, ?)
+				""";
 
+		try {
+			PreparedStatement st = connection.prepareStatement(sql);
+
+			st.setString(1, payment.getId());
+			st.setString(2, payment.getStudentId());
+			st.setInt(3, payment.getLevelId());
+			st.setInt(4, payment.getAcademicSessionId());
+			st.setDate(5, new java.sql.Date(payment.getCreatedAt().getTime()));
+			st.setDate(6, new java.sql.Date(payment.getUpdatedAt().getTime()));
+
+			st.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -76,7 +101,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 		Payment result = null;
 		try {
 			String where = """
-					WHERE "public"."Payment"."id" = ? LIMIT 1
+					WHERE "public"."Payment"."id" = ?
 					""";
 			String sql = selectSQL + where;
 
@@ -157,14 +182,61 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 	@Override
 	public void updateOne(Payment payment) {
-		// TODO Auto-generated method stub
+		String sql = """
+				UPDATE "public"."Payment"
+				SET
+					"id" = ?,
+					"studentId" = ?,
+					"academicSessionId" = ?,
+					"levelId" = ?,
+					"createdAt" = ?,
+					"updatedAt" = ?
+				WHERE (
+				        "public"."Payment"."id" = ?
+				    )
+				""";
 
+		try {
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setString(1, payment.getId());
+			st.setString(2, payment.getStudentId());
+			st.setInt(3, payment.getAcademicSessionId());
+			st.setInt(4, payment.getLevelId());
+			st.setDate(5, new java.sql.Date(payment.getCreatedAt().getTime()));
+			st.setDate(6, new java.sql.Date(payment.getUpdatedAt().getTime()));
+			st.setString(7, payment.getId());
+
+			st.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		// deleteOne(payment.getId());
+		// addOne(payment);
 	}
 
 	@Override
-	public void deleteOne(int id) {
-		// TODO Auto-generated method stub
+	public void deleteOne(String id) {
+		if (id == null)
+			return;
 
+		String sql = """
+				DELETE FROM "public"."Payment"
+				WHERE (
+				        "public"."Payment"."id" = ?
+				    )
+				""";
+
+		try {
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setString(1, id);
+
+			st.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 }

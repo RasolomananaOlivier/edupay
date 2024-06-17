@@ -11,7 +11,7 @@ List<Payment> payments = (List<Payment>) request.getAttribute("payments");
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
@@ -22,6 +22,8 @@ List<Payment> payments = (List<Payment>) request.getAttribute("payments");
 		%>
 		<li>
 			<p><%=payment.getId()%></p>
+			<a href="<%= request.getContextPath() + "/payments/edit?paymentId=" + payment.getId() %>">Mettre à jour</a>
+			<a href="<%= request.getContextPath() + "/payments/delete?paymentId=" + payment.getId() %>">Supprimer</a>
 
 			<ul>
 				<%
