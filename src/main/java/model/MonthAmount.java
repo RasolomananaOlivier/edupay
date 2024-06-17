@@ -96,7 +96,12 @@ public class MonthAmount {
 		MonthAmount equipment = new MonthAmount();
 
 		try {
-			//equipment.setId(Integer.parseInt(request.getParameter("amountId")));
+			String id = request.getParameter("amountId");
+			
+			if(id != null) {
+				equipment.setId(Integer.parseInt(id));	
+			}
+			
 			equipment.setValue(Integer.parseInt(request.getParameter("amountValue")));
 			equipment.setLevelId(Integer.parseInt(request.getParameter("level")));
 			

@@ -2,9 +2,9 @@
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	<%
-	List<Level> levels = (List<Level>) request.getAttribute("levels");
-	%>
+<%
+List<Level> levels = (List<Level>) request.getAttribute("levels");
+%>
 <!DOCTYPE html>
 <html>
 <head>

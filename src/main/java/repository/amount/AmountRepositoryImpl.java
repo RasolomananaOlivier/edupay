@@ -52,7 +52,7 @@ public class AmountRepositoryImpl implements AmountRepository {
 
 			st.setInt(1, id);
 
-			ResultSet result = st.executeQuery(sql);
+			ResultSet result = st.executeQuery();
 
 			MonthAmount amount = null;
 
@@ -70,7 +70,7 @@ public class AmountRepositoryImpl implements AmountRepository {
 	}
 
 	@Override
-	public void addLMonthAmount(MonthAmount amount) {
+	public void addMonthAmount(MonthAmount amount) {
 		try (Connection connection = Database.getConnection()) {
 
 			String sql = "INSERT INTO \"MonthAmount\" "
@@ -94,8 +94,26 @@ public class AmountRepositoryImpl implements AmountRepository {
 
 	@Override
 	public void updateMonthAmount(MonthAmount amount) {
-		// TODO Auto-generated method stub
+		try (Connection connection = Database.getConnection()) {
+			
+			String sql = "UPDATE \"MonthAmount\" SET "
+					+ "\"value\" = ?, "
+					+ "\"levelId\" = ?, "
+					+ "\"createdAt\" = ? "
+					+ "WHERE \"id\" = ?";
+					
+			PreparedStatement st = connection.prepareStatement(sql);
 
+			st.setInt(1, amount.getValue());
+			st.setInt(2, amount.getLevelId());
+			st.setDate(3, new Date(System.currentTimeMillis()));
+			st.setInt(4, amount.getId());
+
+			st.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

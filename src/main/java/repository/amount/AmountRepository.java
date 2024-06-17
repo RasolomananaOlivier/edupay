@@ -9,7 +9,7 @@ public interface AmountRepository {
 
 	MonthAmount getMonthAmount(int id);
 
-	void addLMonthAmount(MonthAmount amount);
+	void addMonthAmount(MonthAmount amount);
 
 	void updateMonthAmount(MonthAmount amount);
 

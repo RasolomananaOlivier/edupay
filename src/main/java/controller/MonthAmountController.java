@@ -23,22 +23,24 @@ import java.util.List;
  */
 public class MonthAmountController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private AmountRepository monthAmountRepository;
 	private LevelRepository levelRepository;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public MonthAmountController() {
-        monthAmountRepository = new AmountRepositoryImpl();
-        levelRepository = new LevelRepositoryImpl();
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public MonthAmountController() {
+		monthAmountRepository = new AmountRepositoryImpl();
+		levelRepository = new LevelRepositoryImpl();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String action = request.getPathInfo();
 
 		if (action == null) {
@@ -62,9 +64,11 @@ public class MonthAmountController extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String action = request.getPathInfo();
 
 		if (action != null) {
@@ -83,11 +87,11 @@ public class MonthAmountController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
-	
+
 	private void listAmounts(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<MonthAmount> monthAmounts = monthAmountRepository.getMonthAmounts();
-		
+
 		request.setAttribute("monthAmounts", monthAmounts);
 
 		request.getRequestDispatcher("/WEB-INF/views/amounts/index.jsp").forward(request, response);
@@ -96,7 +100,7 @@ public class MonthAmountController extends HttpServlet {
 	private void showNewForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Level> levels = levelRepository.getLevels();
-		
+
 		request.setAttribute("levels", levels);
 
 		request.getRequestDispatcher("/WEB-INF/views/amounts/create.jsp").forward(request, response);
@@ -104,20 +108,34 @@ public class MonthAmountController extends HttpServlet {
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String idString = request.getParameter("amountId");
 
-		request.getRequestDispatcher("/WEB-INF/views/amounts/edit.jsp").forward(request, response);
+		Integer id = null;
+		try {
+			id = Integer.parseInt(idString);
+
+			MonthAmount amount = monthAmountRepository.getMonthAmount(id);
+			List<Level> levels = levelRepository.getLevels();
+
+			request.setAttribute("levels", levels);
+			request.setAttribute("amount", amount);
+
+			request.getRequestDispatcher("/WEB-INF/views/amounts/edit.jsp").forward(request, response);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 	private void insertAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		monthAmountRepository.addLMonthAmount(MonthAmount.fromRequest(request));
+		monthAmountRepository.addMonthAmount(MonthAmount.fromRequest(request));
 
 		response.sendRedirect(request.getContextPath() + "/amounts");
 	}
 
 	private void updateAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		monthAmountRepository.updateMonthAmount(MonthAmount.fromRequest(request));
 
 		response.sendRedirect(request.getContextPath() + "/amounts");
 	}
@@ -125,19 +143,17 @@ public class MonthAmountController extends HttpServlet {
 	private void deleteAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String idString = request.getParameter("amountId");
-		
+
 		Integer id = null;
 		try {
 			id = Integer.parseInt(idString);
-			
+
 			monthAmountRepository.deleteMonthAmount(id);
-			
+
 			response.sendRedirect(request.getContextPath() + "/amounts");
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-
-
 	}
 
 }
