@@ -39,4 +39,24 @@
     <servlet-name>PaymentController</servlet-name>
     <url-pattern>/payments/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MonthAmountController</display-name>
+    <servlet-name>MonthAmountController</servlet-name>
+    <servlet-class>controller.MonthAmountController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthAmountController</servlet-name>
+    <url-pattern>/amounts/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EquipmentAmountController</display-name>
+    <servlet-name>EquipmentAmountController</servlet-name>
+    <servlet-class>controller.EquipmentAmountController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EquipmentAmountController</servlet-name>
+    <url-pattern>/equipment-amounts/*</url-pattern>
+  </servlet-mapping>
 </web-app>
