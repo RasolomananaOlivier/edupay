@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class EquipmentAmount {
 	private Integer id;
 	private Integer value;
@@ -83,6 +85,31 @@ public class EquipmentAmount {
 
 			equipment.setLevel(new Level(resultSet.getInt(6), resultSet.getString(7)));
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return equipment;
+	}
+	
+	public static EquipmentAmount fromRequest(HttpServletRequest request) {
+		EquipmentAmount equipment = new EquipmentAmount();
+
+		try {
+			String id = request.getParameter("amountId");
+			
+			if(id != null) {
+				equipment.setId(Integer.parseInt(id));	
+			}
+			
+			equipment.setValue(Integer.parseInt(request.getParameter("amountValue")));
+			equipment.setLevelId(Integer.parseInt(request.getParameter("level")));
+			
+			Date now = new Date();
+			equipment.setCreatedAt(now);
+			equipment.setUpdatedAt(now);
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
