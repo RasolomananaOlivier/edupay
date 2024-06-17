@@ -29,4 +29,14 @@
     <servlet-name>StudentController</servlet-name>
     <url-pattern>/students/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>MonthAmountController</display-name>
+    <servlet-name>MonthAmountController</servlet-name>
+    <servlet-class>controller.MonthAmountController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthAmountController</servlet-name>
+    <url-pattern>/amounts/*</url-pattern>
+  </servlet-mapping>
 </web-app>
