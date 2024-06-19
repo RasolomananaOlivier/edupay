@@ -1,7 +1,6 @@
 package repository.equipmentAmount;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,11 +78,11 @@ public class EquipmentAmountRepositoryImpl implements EquipmentAmountRepository 
 
 			PreparedStatement st = connection.prepareStatement(sql);
 
-			//st.setInt(1, amount.getId());
+			// st.setInt(1, amount.getId());
 			st.setInt(1, amount.getValue());
 			st.setInt(2, amount.getLevelId());
-			st.setDate(3, new Date(amount.getCreatedAt().getTime()));
-			st.setDate(4, new Date(amount.getUpdatedAt().getTime()));
+			st.setTimestamp(3, new java.sql.Timestamp(amount.getCreatedAt().getTime()));
+			st.setTimestamp(4, new java.sql.Timestamp(amount.getUpdatedAt().getTime()));
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -95,18 +94,18 @@ public class EquipmentAmountRepositoryImpl implements EquipmentAmountRepository 
 	@Override
 	public void updateMonthAmount(EquipmentAmount amount) {
 		try (Connection connection = Database.getConnection()) {
-			
+
 			String sql = "UPDATE \"EquipmentAmount\" SET "
 					+ "\"value\" = ?, "
 					+ "\"levelId\" = ?, "
 					+ "\"createdAt\" = ? "
 					+ "WHERE \"id\" = ?";
-					
+
 			PreparedStatement st = connection.prepareStatement(sql);
 
 			st.setInt(1, amount.getValue());
 			st.setInt(2, amount.getLevelId());
-			st.setDate(3, new Date(System.currentTimeMillis()));
+			st.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
 			st.setInt(4, amount.getId());
 
 			st.executeUpdate();
@@ -133,6 +132,35 @@ public class EquipmentAmountRepositoryImpl implements EquipmentAmountRepository 
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public EquipmentAmount getByLevelId(int levelId) {
+		try (Connection connection = Database.getConnection()) {
+
+			String sql = "SELECT * FROM \"EquipmentAmount\" "
+					+ "INNER JOIN \"Level\" ON \"Level\".\"id\" = \"EquipmentAmount\".\"levelId\" "
+					+ "WHERE \"EquipmentAmount\".\"levelId\" = ? ";
+
+			PreparedStatement st = connection.prepareStatement(sql);
+
+			st.setInt(1, levelId);
+
+			ResultSet result = st.executeQuery();
+
+			EquipmentAmount amount = null;
+
+			while (result.next()) {
+				amount = EquipmentAmount.fromResultSet(result);
+			}
+
+			return amount;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 }

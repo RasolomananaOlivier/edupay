@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import database.Database;
@@ -86,8 +86,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 			st.setString(2, payment.getStudentId());
 			st.setInt(3, payment.getLevelId());
 			st.setInt(4, payment.getAcademicSessionId());
-			st.setDate(5, new java.sql.Date(payment.getCreatedAt().getTime()));
-			st.setDate(6, new java.sql.Date(payment.getUpdatedAt().getTime()));
+			st.setTimestamp(5, new java.sql.Timestamp(payment.getCreatedAt().getTime()));
+			st.setTimestamp(6, new java.sql.Timestamp(payment.getUpdatedAt().getTime()));
 
 			st.executeUpdate();
 		} catch (Exception e) {
@@ -129,7 +129,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 		try {
 
-			Map<String, Payment> map = new HashMap<>();
+			Map<String, Payment> map = new LinkedHashMap<>();
 
 			while (resultSet.next()) {
 				Payment payment = Payment.fromResultSet(resultSet);
@@ -202,8 +202,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 			st.setString(2, payment.getStudentId());
 			st.setInt(3, payment.getAcademicSessionId());
 			st.setInt(4, payment.getLevelId());
-			st.setDate(5, new java.sql.Date(payment.getCreatedAt().getTime()));
-			st.setDate(6, new java.sql.Date(payment.getUpdatedAt().getTime()));
+			st.setTimestamp(5, new java.sql.Timestamp(payment.getCreatedAt().getTime()));
+			st.setTimestamp(6, new java.sql.Timestamp(payment.getUpdatedAt().getTime()));
 			st.setString(7, payment.getId());
 
 			st.executeUpdate();
@@ -211,9 +211,6 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-
-		// deleteOne(payment.getId());
-		// addOne(payment);
 	}
 
 	@Override

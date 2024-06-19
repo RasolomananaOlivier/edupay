@@ -1,5 +1,7 @@
 <%@page import="model.Payment"%>
 <%@page import="util.PaymentPeriod"%>
+<%@page import="model.MonthAmount"%>
+<%@page import="model.EquipmentAmount"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Random"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -9,6 +11,8 @@
 Payment payment = (Payment) request.getAttribute("payment");
 List<PaymentPeriod> usedPaymentPeriods = (List<PaymentPeriod>) request.getAttribute("usedPaymentPeriods");
 List<PaymentPeriod> disabledPaymentPeriods = (List<PaymentPeriod>) request.getAttribute("disabledPaymentPeriods");
+MonthAmount monthAmount = (MonthAmount) request.getAttribute("monthAmount");
+EquipmentAmount equipmentAmount = (EquipmentAmount) request.getAttribute("equipmentAmount");
 Random random = new Random();
 int uniqueId = random.nextInt();
 %>
@@ -36,7 +40,15 @@ int uniqueId = random.nextInt();
             <% } else { %>
                 <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>" name="paymentPeriods" value="<%= paymentPeriod %>">
             <% } %>
-            <label for="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>"><%= paymentPeriod.getLabel() %></label><br>
+                <span><%= 52 %></span>
+            <label for="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>">
+                <%= paymentPeriod.getLabel() %>
+                <% if (paymentPeriod == PaymentPeriod.EQUIPMENT) { %>
+                    <span><%= equipmentAmount.getValue() %></span>
+                <% } else { %>
+                    <span><%= monthAmount.getValue() %></span>
+                <% } %> Ar
+            </label><br>
         <% } %>
 
         <input type="Submit" />

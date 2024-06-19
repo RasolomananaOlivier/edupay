@@ -6,13 +6,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.AcademicSession;
+import model.EquipmentAmount;
 import model.Faculty;
 import model.Level;
+import model.MonthAmount;
 import model.Payment;
 import model.PaymentItem;
 import model.Student;
 import repository.academicSession.AcademicSessionRepository;
 import repository.academicSession.AcademicSessionRepositoryImpl;
+import repository.amount.AmountRepository;
+import repository.amount.AmountRepositoryImpl;
+import repository.equipmentAmount.EquipmentAmountRepository;
+import repository.equipmentAmount.EquipmentAmountRepositoryImpl;
 import repository.faculty.FacultyRepository;
 import repository.faculty.FacultyRepositoryImpl;
 import repository.level.LevelRepository;
@@ -45,6 +51,8 @@ public class PaymentController extends HttpServlet {
 	private LevelRepository levelRepository;
 	private FacultyRepository facultyRepository;
 	private PaymentItemRepository paymentItemRepository;
+	private AmountRepository amountRepository;
+	private EquipmentAmountRepository equipmentAmountRepository;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -57,6 +65,8 @@ public class PaymentController extends HttpServlet {
 		levelRepository = new LevelRepositoryImpl();
 		facultyRepository = new FacultyRepositoryImpl();
 		paymentItemRepository = new PaymentItemRepositoryImpl();
+		amountRepository = new AmountRepositoryImpl();
+		equipmentAmountRepository = new EquipmentAmountRepositoryImpl();
 	}
 
 	/**
@@ -126,10 +136,13 @@ public class PaymentController extends HttpServlet {
 			throws ServletException, IOException {
 		String studentId = request.getParameter("studentId");
 		Student student = studentRepository.getStudent(studentId);
+		if (student == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 
-		List<Student> students = studentRepository.getAllStudents();
-		List<PaymentPeriod> paymentPeriods = Arrays.asList(PaymentPeriod.values());
-		List<AcademicSession> sessions = sessionRepository.getSessions();
+		MonthAmount monthAmount = amountRepository.getByLevelId(student.getLevelId());
+		EquipmentAmount equipmentAmount = equipmentAmountRepository.getByLevelId(student.getLevelId());
 
 		ArrayList<PaymentPeriod> disabledPaymentPeriods = new ArrayList<>();
 		List<PaymentItem> paymentItems = paymentItemRepository
@@ -142,6 +155,8 @@ public class PaymentController extends HttpServlet {
 
 		request.setAttribute("student", student);
 		request.setAttribute("disabledPaymentPeriods", disabledPaymentPeriods);
+		request.setAttribute("monthAmount", monthAmount);
+		request.setAttribute("equipmentAmount", equipmentAmount);
 
 		request.getRequestDispatcher("/WEB-INF/views/payments/create.jsp").forward(request, response);
 	}
@@ -157,6 +172,8 @@ public class PaymentController extends HttpServlet {
 		}
 
 		Payment payment = paymentRepository.getById(paymentId);
+		MonthAmount monthAmount = amountRepository.getByLevelId(payment.getLevelId());
+		EquipmentAmount equipmentAmount = equipmentAmountRepository.getByLevelId(payment.getLevelId());
 
 		request.setAttribute("payment", payment);
 
@@ -167,7 +184,6 @@ public class PaymentController extends HttpServlet {
 
 		ArrayList<PaymentPeriod> usedPaymentPeriods = new ArrayList<>();
 		for (PaymentItem paymentItem : payment.getPaymentItems()) {
-			System.out.println(paymentItem.getPeriod());
 			usedPaymentPeriods.add(paymentItem.getPeriod());
 		}
 
@@ -175,10 +191,8 @@ public class PaymentController extends HttpServlet {
 
 		List<PaymentItem> paymentItems = paymentItemRepository
 				.getBySessionIdAndStudentId(payment.getAcademicSessionId(), payment.getStudentId());
-		System.out.println("paymentItems: " + paymentItems.size());
 		if (paymentItems != null && !paymentItems.isEmpty()) {
 			for (PaymentItem paymentItem : paymentItems) {
-				System.out.println(paymentItem.getPaymentId() + "===" + (payment.getId()));
 				if (!paymentItem.getPaymentId().equals(payment.getId())) {
 					disabledPaymentPeriods.add(paymentItem.getPeriod());
 				}
@@ -187,6 +201,8 @@ public class PaymentController extends HttpServlet {
 
 		request.setAttribute("disabledPaymentPeriods", disabledPaymentPeriods);
 		request.setAttribute("usedPaymentPeriods", usedPaymentPeriods);
+		request.setAttribute("monthAmount", monthAmount);
+		request.setAttribute("equipmentAmount", equipmentAmount);
 
 		request.getRequestDispatcher("/WEB-INF/views/payments/edit.jsp").forward(request, response);
 	}
@@ -196,6 +212,9 @@ public class PaymentController extends HttpServlet {
 
 		String studentId = request.getParameter("studentId");
 		Student student = studentRepository.getStudent(studentId);
+
+		MonthAmount monthAmount = amountRepository.getByLevelId(student.getLevelId());
+		EquipmentAmount equipmentAmount = equipmentAmountRepository.getByLevelId(student.getLevelId());
 
 		String paymentId = RandomStringGenerator.generate(5);
 
@@ -209,8 +228,11 @@ public class PaymentController extends HttpServlet {
 
 			for (String paymentPeriod : paymentPeriods) {
 				PaymentItem paymentItem = new PaymentItem();
-				// TODO find amount by level and set it
-				// paymentItem.setAmount(...);
+				if (paymentPeriod.equals(PaymentPeriod.EQUIPMENT.toString())) {
+					paymentItem.setAmount(equipmentAmount.getValue());
+				} else {
+					paymentItem.setAmount(monthAmount.getValue());
+				}
 				paymentItem.setPaymentId(paymentId);
 				paymentItem.setPeriod(PaymentPeriod.valueOf(paymentPeriod));
 				newPaymentItems.add(paymentItem);
@@ -251,24 +273,42 @@ public class PaymentController extends HttpServlet {
 			return;
 		}
 
+		MonthAmount monthAmount = amountRepository.getByLevelId(payment.getLevelId());
+		EquipmentAmount equipmentAmount = equipmentAmountRepository.getByLevelId(payment.getLevelId());
+
 		ArrayList<PaymentItem> newPaymentItems = new ArrayList<>();
 
 		String[] paymentPeriods = request.getParameterValues("paymentPeriods");
 		if (paymentPeriods != null) {
 			for (String paymentPeriod : paymentPeriods) {
 				PaymentItem paymentItem = new PaymentItem();
-				// TODO find amount by level and set it
-				// paymentItem.setAmount(...);
+				paymentItem.setPaymentId(paymentId);
+
+				if (paymentPeriod.equals(PaymentPeriod.EQUIPMENT.toString())) {
+					paymentItem.setAmount(equipmentAmount.getValue());
+				} else {
+					paymentItem.setAmount(monthAmount.getValue());
+				}
 				paymentItem.setPeriod(PaymentPeriod.valueOf(paymentPeriod));
 				newPaymentItems.add(paymentItem);
 			}
+
+			if (newPaymentItems.isEmpty()) {
+				response.sendRedirect(request.getContextPath() + "/payments/edit?paymentId=" + paymentId);
+				return;
+			}
+		} else {
+			response.sendRedirect(request.getContextPath() + "/payments/edit?paymentId=" + paymentId);
+			return;
 		}
 
 		payment.setUpdatedAt(new Date());
 		paymentRepository.updateOne(payment);
 
-		payment.setPaymentItems(newPaymentItems);
+		paymentItemRepository
+				.deleteMany(payment.getPaymentItems().stream().map((paymentItem -> paymentItem.getId())).toList());
 
+		payment.setPaymentItems(newPaymentItems);
 		paymentItemRepository.addMany(newPaymentItems);
 
 		response.sendRedirect(request.getContextPath() + "/payments");

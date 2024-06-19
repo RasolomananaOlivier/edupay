@@ -1,5 +1,7 @@
 <%@page import="model.PaymentItem"%>
 <%@page import="model.Student"%>
+<%@page import="model.MonthAmount"%>
+<%@page import="model.EquipmentAmount"%>
 <%@page import="util.PaymentPeriod"%>
 <%@page import="model.AcademicSession"%>
 <%@page import="java.util.List"%>
@@ -9,6 +11,8 @@
 <%
 Student student = (Student) request.getAttribute("student");
 List<PaymentPeriod> disabledPaymentPeriods = (List<PaymentPeriod>) request.getAttribute("disabledPaymentPeriods");
+MonthAmount monthAmount = (MonthAmount) request.getAttribute("monthAmount");
+EquipmentAmount equipmentAmount = (EquipmentAmount) request.getAttribute("equipmentAmount");
 %>
 
 <!DOCTYPE html>
@@ -33,7 +37,14 @@ List<PaymentPeriod> disabledPaymentPeriods = (List<PaymentPeriod>) request.getAt
             <% } else { %>
                 <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() %>" name="paymentPeriods" value="<%= paymentPeriod %>">
             <% } %>
-            <label for="PaymentPeriod.<%= paymentPeriod.toString() %>"><%= paymentPeriod.getLabel() %></label><br>
+            <label for="PaymentPeriod.<%= paymentPeriod.toString() %>">
+                <%= paymentPeriod.getLabel() %>
+                <% if (paymentPeriod == PaymentPeriod.EQUIPMENT) { %>
+                    <span><%= equipmentAmount.getValue() %>
+                <% } else { %>
+                    <%= monthAmount.getValue() %>
+                <% } %> Ar
+            </label><br>
         <% } %>
 
         <input type="submit" value="Create" />
