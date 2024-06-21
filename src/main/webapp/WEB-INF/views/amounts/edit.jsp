@@ -6,6 +6,7 @@
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 MonthAmount amount = (MonthAmount) request.getAttribute("amount");
+List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledLevelIds");
 %>
 <!DOCTYPE html>
 <html>
@@ -18,8 +19,7 @@ MonthAmount amount = (MonthAmount) request.getAttribute("amount");
 <title>Modification du montant</title>
 </head>
 <body>
-
-
+	<jsp:include page="/WEB-INF/components/header.jsp" />
 
 	<main class="px-3 py-5 sm:px-40 md:px-60 lg:px-80">
 		<h1 class="text-3xl font-medium">Modifier le montant</h1>
@@ -39,13 +39,17 @@ MonthAmount amount = (MonthAmount) request.getAttribute("amount");
 					<select id="countries" name="level" required
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
-						for (Level level : levels) {
+							for (Level level : levels) {
 						%>
-						<option <%= level.getId() == amount.getLevelId() ? "selected" : "" %> value="<%=level.getId()%>">
-							<%=level.getName()%>
-						</option>
+							<option
+								value="<%=level.getId()%>"
+								<%= level.getId() == amount.getLevelId() ? "selected" : "" %>
+								<%= disabledLevelIds.contains(level.getId()) ? "disabled" : "" %>
+							>
+								<%=level.getName()%>
+							</option>
 						<%
-						}
+							}
 						%>
 					</select>
 				</div>

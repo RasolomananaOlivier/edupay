@@ -9,6 +9,8 @@ public interface AmountRepository {
 
 	MonthAmount getMonthAmount(int id);
 
+	MonthAmount getByLevelId(int levelId);
+
 	void addMonthAmount(MonthAmount amount);
 
 	void updateMonthAmount(MonthAmount amount);

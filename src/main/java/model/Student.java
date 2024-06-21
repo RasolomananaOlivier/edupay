@@ -24,6 +24,41 @@ public class Student {
 	private AcademicSession session;
 	private Faculty faculty;
 
+	public Student(String id,
+			String name,
+			Gender gender,
+			Date birthDate,
+			String email,
+			Integer facultyId,
+
+			Integer levelId,
+			Integer academicSessionId,
+			Date createdAt,
+			Date updatedAt,
+			Level level,
+
+			AcademicSession session,
+			Faculty faculty) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.gender = gender;
+		this.birthDate = birthDate;
+		this.email = email;
+		this.facultyId = facultyId;
+		this.levelId = levelId;
+		this.academicSessionId = academicSessionId;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.level = level;
+		this.session = session;
+		this.faculty = faculty;
+	}
+
+	public Student() {
+		super();
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -111,7 +146,7 @@ public class Student {
 	public void setLevel(Level level) {
 		this.level = level;
 	}
-	
+
 	public AcademicSession getSession() {
 		return session;
 	}
@@ -142,13 +177,13 @@ public class Student {
 			student.setAcademicSessionId(resultSet.getInt(8));
 			student.setCreatedAt(resultSet.getDate(9));
 			student.setUpdatedAt(resultSet.getDate(10));
-			
+
 			Level level = new Level(resultSet.getInt(11), resultSet.getString(12));
 			student.setLevel(level);
-			
+
 			AcademicSession session = new AcademicSession(resultSet.getInt(13), resultSet.getInt(14));
 			student.setSession(session);
-			
+
 			Faculty faculty = new Faculty(resultSet.getInt(15), resultSet.getString(16));
 			student.setFaculty(faculty);
 
@@ -159,56 +194,56 @@ public class Student {
 
 		return student;
 	}
-	
+
 	public static Student fromRequest(HttpServletRequest request) {
 		Student student = new Student();
-		
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-	    // Extract parameters from request
-	    student.setId(request.getParameter("id"));
-	    student.setName(request.getParameter("name"));
+		// Extract parameters from request
+		student.setId(request.getParameter("id"));
+		student.setName(request.getParameter("name"));
 
-	    // Convert gender string to Gender enum
-	    String genderString = request.getParameter("gender");
-	    System.out.println(genderString);
-	    if (genderString != null) {
-	        student.setGender(Gender.valueOf(genderString.toUpperCase()));
-	    }
+		// Convert gender string to Gender enum
+		String genderString = request.getParameter("gender");
+		System.out.println(genderString);
+		if (genderString != null) {
+			student.setGender(Gender.valueOf(genderString.toUpperCase()));
+		}
 
-	    // Convert birth date string to Date
-	    String birthDateString = request.getParameter("birthDate");
-	    if (birthDateString != null) {
-	        try {
-	            student.setBirthDate(dateFormat.parse(birthDateString));
-	        } catch (ParseException e) {
-	            e.printStackTrace();
-	        }
-	    }
+		// Convert birth date string to Date
+		String birthDateString = request.getParameter("birthDate");
+		if (birthDateString != null) {
+			try {
+				student.setBirthDate(dateFormat.parse(birthDateString));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 
-	    student.setEmail(request.getParameter("email"));
+		student.setEmail(request.getParameter("email"));
 
-	    // Convert string parameters to Integer
-	    String facultyIdString = request.getParameter("faculty");
-	    if (facultyIdString != null) {
-	        student.setFacultyId(Integer.valueOf(facultyIdString));
-	    }
+		// Convert string parameters to Integer
+		String facultyIdString = request.getParameter("faculty");
+		if (facultyIdString != null) {
+			student.setFacultyId(Integer.valueOf(facultyIdString));
+		}
 
-	    String levelIdString = request.getParameter("level");
-	    if (levelIdString != null) {
-	        student.setLevelId(Integer.valueOf(levelIdString));
-	    }
+		String levelIdString = request.getParameter("level");
+		if (levelIdString != null) {
+			student.setLevelId(Integer.valueOf(levelIdString));
+		}
 
-	    String academicSessionIdString = request.getParameter("academicSession");
-	    if (academicSessionIdString != null) {
-	        student.setAcademicSessionId(Integer.valueOf(academicSessionIdString));
-	    }
+		String academicSessionIdString = request.getParameter("academicSession");
+		if (academicSessionIdString != null) {
+			student.setAcademicSessionId(Integer.valueOf(academicSessionIdString));
+		}
 
-	    // Set createdAt and updatedAt dates to current date
-	    java.util.Date currentDate = new java.util.Date();
-	    student.setCreatedAt(currentDate);
-	    student.setUpdatedAt(currentDate);
-		
+		// Set createdAt and updatedAt dates to current date
+		java.util.Date currentDate = new java.util.Date();
+		student.setCreatedAt(currentDate);
+		student.setUpdatedAt(currentDate);
+
 		return student;
 	}
 }

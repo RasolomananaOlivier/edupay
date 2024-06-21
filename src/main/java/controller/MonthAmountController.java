@@ -16,6 +16,7 @@ import repository.level.LevelRepository;
 import repository.level.LevelRepositoryImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,18 +48,18 @@ public class MonthAmountController extends HttpServlet {
 			listAmounts(request, response);
 		} else {
 			switch (action) {
-			case "/new":
-				showNewForm(request, response);
-				break;
-			case "/edit":
-				showEditForm(request, response);
-				break;
-			case "/delete":
-				deleteAmount(request, response);
-				break;
-			default:
-				listAmounts(request, response);
-				break;
+				case "/new":
+					showNewForm(request, response);
+					break;
+				case "/edit":
+					showEditForm(request, response);
+					break;
+				case "/delete":
+					deleteAmount(request, response);
+					break;
+				default:
+					listAmounts(request, response);
+					break;
 			}
 		}
 	}
@@ -73,15 +74,15 @@ public class MonthAmountController extends HttpServlet {
 
 		if (action != null) {
 			switch (action) {
-			case "/store":
-				insertAmount(request, response);
-				break;
-			case "/update":
-				updateAmount(request, response);
-				break;
-			default:
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-				break;
+				case "/store":
+					insertAmount(request, response);
+					break;
+				case "/update":
+					updateAmount(request, response);
+					break;
+				default:
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
+					break;
 			}
 		} else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -100,8 +101,11 @@ public class MonthAmountController extends HttpServlet {
 	private void showNewForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Level> levels = levelRepository.getLevels();
+		List<MonthAmount> monthAmounts = monthAmountRepository.getMonthAmounts();
+		List<Integer> disabledLevelIds = monthAmounts.stream().map((monthAmount -> monthAmount.getLevelId())).toList();
 
 		request.setAttribute("levels", levels);
+		request.setAttribute("disabledLevelIds", disabledLevelIds);
 
 		request.getRequestDispatcher("/WEB-INF/views/amounts/create.jsp").forward(request, response);
 	}
@@ -117,8 +121,17 @@ public class MonthAmountController extends HttpServlet {
 			MonthAmount amount = monthAmountRepository.getMonthAmount(id);
 			List<Level> levels = levelRepository.getLevels();
 
+			List<MonthAmount> monthAmounts = monthAmountRepository.getMonthAmounts();
+			List<Integer> disabledLevelIds = new ArrayList<>();
+			for (MonthAmount monthAmount : monthAmounts) {
+				if (monthAmount.getLevelId() != amount.getLevelId()) {
+					disabledLevelIds.add(monthAmount.getLevelId());
+				}
+			}
+
 			request.setAttribute("levels", levels);
 			request.setAttribute("amount", amount);
+			request.setAttribute("disabledLevelIds", disabledLevelIds);
 
 			request.getRequestDispatcher("/WEB-INF/views/amounts/edit.jsp").forward(request, response);
 		} catch (Exception e) {
@@ -128,16 +141,23 @@ public class MonthAmountController extends HttpServlet {
 
 	private void insertAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		monthAmountRepository.addMonthAmount(MonthAmount.fromRequest(request));
-
-		response.sendRedirect(request.getContextPath() + "/amounts");
+		if (request.getParameter("level") == null || request.getParameter("amountValue") == null) {
+			response.sendRedirect(request.getContextPath() + "/amounts/new");
+		} else {
+			monthAmountRepository.addMonthAmount(MonthAmount.fromRequest(request));
+			response.sendRedirect(request.getContextPath() + "/amounts");
+		}
 	}
 
 	private void updateAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		monthAmountRepository.updateMonthAmount(MonthAmount.fromRequest(request));
-
-		response.sendRedirect(request.getContextPath() + "/amounts");
+		if (request.getParameter("level") == null || request.getParameter("amountValue") == null) {
+			response.sendRedirect(request.getContextPath() + "/amounts/edit?amountId=" + request
+					.getParameter("amountId"));
+		} else {
+			monthAmountRepository.updateMonthAmount(MonthAmount.fromRequest(request));
+			response.sendRedirect(request.getContextPath() + "/amounts");
+		}
 	}
 
 	private void deleteAmount(HttpServletRequest request, HttpServletResponse response)

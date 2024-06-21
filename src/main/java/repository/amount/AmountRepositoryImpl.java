@@ -1,7 +1,6 @@
 package repository.amount;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,11 +78,11 @@ public class AmountRepositoryImpl implements AmountRepository {
 
 			PreparedStatement st = connection.prepareStatement(sql);
 
-			//st.setInt(1, amount.getId());
+			// st.setInt(1, amount.getId());
 			st.setInt(1, amount.getValue());
 			st.setInt(2, amount.getLevelId());
-			st.setDate(3, new Date(amount.getCreatedAt().getTime()));
-			st.setDate(4, new Date(amount.getUpdatedAt().getTime()));
+			st.setTimestamp(3, new java.sql.Timestamp(amount.getCreatedAt().getTime()));
+			st.setTimestamp(4, new java.sql.Timestamp(amount.getUpdatedAt().getTime()));
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -95,18 +94,18 @@ public class AmountRepositoryImpl implements AmountRepository {
 	@Override
 	public void updateMonthAmount(MonthAmount amount) {
 		try (Connection connection = Database.getConnection()) {
-			
+
 			String sql = "UPDATE \"MonthAmount\" SET "
 					+ "\"value\" = ?, "
 					+ "\"levelId\" = ?, "
 					+ "\"createdAt\" = ? "
 					+ "WHERE \"id\" = ?";
-					
+
 			PreparedStatement st = connection.prepareStatement(sql);
 
 			st.setInt(1, amount.getValue());
 			st.setInt(2, amount.getLevelId());
-			st.setDate(3, new Date(System.currentTimeMillis()));
+			st.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
 			st.setInt(4, amount.getId());
 
 			st.executeUpdate();
@@ -133,6 +132,37 @@ public class AmountRepositoryImpl implements AmountRepository {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public MonthAmount getByLevelId(int levelId) {
+		MonthAmount amount = null;
+
+		try (Connection connection = Database.getConnection()) {
+			String sql = """
+					SELECT *
+					FROM "MonthAmount"
+					    INNER JOIN "Level" ON "Level"."id" = "MonthAmount"."levelId"
+					WHERE "MonthAmount"."levelId" = ?
+					""";
+			;
+
+			PreparedStatement st = connection.prepareStatement(sql);
+
+			st.setInt(1, levelId);
+
+			ResultSet result = st.executeQuery();
+
+			while (result.next()) {
+				amount = MonthAmount.fromResultSet(result);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return amount;
 	}
 
 }

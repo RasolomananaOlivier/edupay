@@ -2,7 +2,9 @@
 <%@page import="model.Faculty"%>
 <%@page import="model.Level"%>
 <%@page import="model.Student"%>
+<%@page import="util.DateFormatter"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -11,6 +13,7 @@ List<Student> students = (List<Student>) request.getAttribute("students");
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
 List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("academicSessions");
+Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request.getAttribute("levelAmountsAvailability");
 %>
 <!DOCTYPE html>
 <html>
@@ -23,14 +26,7 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 <title>Liste des étudiants</title>
 </head>
 <body>
-	<div class="flex justify-between p-3">
-		<div class="font-bold text-blue-600 font-mono">Boursify</div>
-
-		<div class="flex justify-between gap-3">
-			<a href="students/index.jsp"> Etudiants </a> <a> Montant </a> <a>
-				Paiement </a>
-		</div>
-	</div>
+	<jsp:include page="/WEB-INF/components/header.jsp" />
 
 	<main class="px-5 py-3">
 		<h1 class="text-3xl font-bold">Liste des étudiants</h1>
@@ -39,7 +35,7 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 			<div class="mt-1 text-slate-600">Retrouver ici la liste des
 				étudiants</div>
 
-			<a href="students/new"
+			<a href="<%= request.getContextPath() %>/students/new"
 				class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Nouvel
 				étudiant</a>
 		</div>
@@ -163,9 +159,13 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 					</div>
 
 					<div class="flex gap-1">
-						<a href="students/edit?studentId=<%=students.get(i).getId()%>"
+						<% if (levelAmountsAvailability.get(students.get(i).getLevelId()) == true) { %>
+							<a href="<%= request.getContextPath() %>/payments/new?studentId=<%=students.get(i).getId()%>"
+								class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Payer</a>
+						<% } %>
+						<a href="<%= request.getContextPath() %>/students/edit?studentId=<%=students.get(i).getId()%>"
 							class="mb-2 me-2 rounded-full bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Modifier</a>
-						<a href="students/delete?studentId=<%=students.get(i).getId()%>"
+						<a href="<%= request.getContextPath() %>/students/delete?studentId=<%=students.get(i).getId()%>"
 							class="mb-2 me-2 rounded-full border border-red-700 px-5 py-2.5 text-center text-sm font-medium text-red-700 hover:bg-red-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white dark:focus:ring-red-900">Supprimer</a>
 					</div>
 				</div>
@@ -185,7 +185,7 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Date de naissance</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getBirthDate()%></div>
+						<div class="font-semibold text-slate-800"><%= DateFormatter.format(students.get(i).getBirthDate())%></div>
 					</div>
 
 					<div class="flex flex-col">

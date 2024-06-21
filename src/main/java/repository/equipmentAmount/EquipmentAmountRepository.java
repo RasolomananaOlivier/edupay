@@ -9,6 +9,8 @@ public interface EquipmentAmountRepository {
 
 	EquipmentAmount getMonthAmount(int id);
 
+	EquipmentAmount getByLevelId(int levelId);
+
 	void addMonthAmount(EquipmentAmount amount);
 
 	void updateMonthAmount(EquipmentAmount amount);

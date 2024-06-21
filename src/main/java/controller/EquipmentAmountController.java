@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.AcademicSession;
 import model.Faculty;
 import model.Level;
+import model.MonthAmount;
 import model.EquipmentAmount;
 import model.Student;
 import repository.amount.AmountRepository;
@@ -18,6 +19,7 @@ import repository.level.LevelRepository;
 import repository.level.LevelRepositoryImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,18 +51,18 @@ public class EquipmentAmountController extends HttpServlet {
 			listAmounts(request, response);
 		} else {
 			switch (action) {
-			case "/new":
-				showNewForm(request, response);
-				break;
-			case "/edit":
-				showEditForm(request, response);
-				break;
-			case "/delete":
-				deleteAmount(request, response);
-				break;
-			default:
-				listAmounts(request, response);
-				break;
+				case "/new":
+					showNewForm(request, response);
+					break;
+				case "/edit":
+					showEditForm(request, response);
+					break;
+				case "/delete":
+					deleteAmount(request, response);
+					break;
+				default:
+					listAmounts(request, response);
+					break;
 			}
 		}
 	}
@@ -75,15 +77,15 @@ public class EquipmentAmountController extends HttpServlet {
 
 		if (action != null) {
 			switch (action) {
-			case "/store":
-				insertAmount(request, response);
-				break;
-			case "/update":
-				updateAmount(request, response);
-				break;
-			default:
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-				break;
+				case "/store":
+					insertAmount(request, response);
+					break;
+				case "/update":
+					updateAmount(request, response);
+					break;
+				default:
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
+					break;
 			}
 		} else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -102,8 +104,11 @@ public class EquipmentAmountController extends HttpServlet {
 	private void showNewForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Level> levels = levelRepository.getLevels();
+		List<EquipmentAmount> monthAmounts = equipmentAmountRepository.getMonthAmounts();
+		List<Integer> disabledLevelIds = monthAmounts.stream().map((monthAmount -> monthAmount.getLevelId())).toList();
 
 		request.setAttribute("levels", levels);
+		request.setAttribute("disabledLevelIds", disabledLevelIds);
 
 		request.getRequestDispatcher("/WEB-INF/views/equipment-amounts/create.jsp").forward(request, response);
 	}
@@ -119,8 +124,17 @@ public class EquipmentAmountController extends HttpServlet {
 			EquipmentAmount equipment = equipmentAmountRepository.getMonthAmount(id);
 			List<Level> levels = levelRepository.getLevels();
 
+			List<EquipmentAmount> equipmentAmounts = equipmentAmountRepository.getMonthAmounts();
+			List<Integer> disabledLevelIds = new ArrayList<>();
+			for (EquipmentAmount equipmentAmount : equipmentAmounts) {
+				if (equipmentAmount.getLevelId() != equipment.getLevelId()) {
+					disabledLevelIds.add(equipmentAmount.getLevelId());
+				}
+			}
+
 			request.setAttribute("levels", levels);
 			request.setAttribute("equipment", equipment);
+			request.setAttribute("disabledLevelIds", disabledLevelIds);
 
 			request.getRequestDispatcher("/WEB-INF/views/equipment-amounts/edit.jsp").forward(request, response);
 		} catch (Exception e) {
@@ -130,16 +144,23 @@ public class EquipmentAmountController extends HttpServlet {
 
 	private void insertAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		equipmentAmountRepository.addMonthAmount(EquipmentAmount.fromRequest(request));
-
-		response.sendRedirect(request.getContextPath() + "/equipment-amounts");
+		if (request.getParameter("level") == null || request.getParameter("amountValue") == null) {
+			response.sendRedirect(request.getContextPath() + "/equipment-amounts/new");
+		} else {
+			equipmentAmountRepository.addMonthAmount(EquipmentAmount.fromRequest(request));
+			response.sendRedirect(request.getContextPath() + "/equipment-amounts");
+		}
 	}
 
 	private void updateAmount(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		equipmentAmountRepository.updateMonthAmount(EquipmentAmount.fromRequest(request));
-
-		response.sendRedirect(request.getContextPath() + "/equipment-amounts");
+		if (request.getParameter("level") == null || request.getParameter("amountValue") == null) {
+			response.sendRedirect(request.getContextPath() + "/equipment-amounts/edit?amountId=" + request
+					.getParameter("amountId"));
+		} else {
+			equipmentAmountRepository.updateMonthAmount(EquipmentAmount.fromRequest(request));
+			response.sendRedirect(request.getContextPath() + "/equipment-amounts");
+		}
 	}
 
 	private void deleteAmount(HttpServletRequest request, HttpServletResponse response)
