@@ -3,6 +3,7 @@
 <%@page import="model.Level"%>
 <%@page import="model.Student"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -11,6 +12,7 @@ List<Student> students = (List<Student>) request.getAttribute("students");
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
 List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("academicSessions");
+Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request.getAttribute("levelAmountsAvailability");
 %>
 <!DOCTYPE html>
 <html>
@@ -163,6 +165,10 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 					</div>
 
 					<div class="flex gap-1">
+						<% if (levelAmountsAvailability.get(students.get(i).getLevelId()) == true) { %>
+							<a href="payments/new?studentId=<%=students.get(i).getId()%>"
+								class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Payer</a>
+						<% } %>
 						<a href="students/edit?studentId=<%=students.get(i).getId()%>"
 							class="mb-2 me-2 rounded-full bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Modifier</a>
 						<a href="students/delete?studentId=<%=students.get(i).getId()%>"

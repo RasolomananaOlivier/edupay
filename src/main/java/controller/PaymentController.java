@@ -1,14 +1,22 @@
 package controller;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.exceptions.Html2PdfException;
+
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.AcademicSession;
 import model.EquipmentAmount;
-import model.Faculty;
-import model.Level;
 import model.MonthAmount;
 import model.Payment;
 import model.PaymentItem;
@@ -31,14 +39,7 @@ import repository.student.StudentRepository;
 import repository.student.StudentRepositoryImpl;
 import util.PaymentPeriod;
 import util.RandomStringGenerator;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.random.RandomGenerator;
+import util.ReceiptFormatter;
 
 /**
  * Servlet implementation class PaymentController
@@ -91,6 +92,10 @@ public class PaymentController extends HttpServlet {
 				case "/delete":
 					deletePayment(request, response);
 					break;
+				case "/receipt": {
+					showReceipt(request, response);
+					break;
+				}
 				default:
 					listPayments(request, response);
 					break;
@@ -205,6 +210,17 @@ public class PaymentController extends HttpServlet {
 		request.setAttribute("equipmentAmount", equipmentAmount);
 
 		request.getRequestDispatcher("/WEB-INF/views/payments/edit.jsp").forward(request, response);
+	}
+
+	private void showReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String paymentId = request.getParameter("paymentId");
+		Payment payment = paymentRepository.getById(paymentId);
+
+		String formattedHtmlContent = ReceiptFormatter.formatHTML(payment);
+
+		// Convert HTML to PDF
+		response.setContentType("application/pdf");
+		HtmlConverter.convertToPdf(formattedHtmlContent, response.getOutputStream());
 	}
 
 	private void insertPayment(HttpServletRequest request, HttpServletResponse response)
