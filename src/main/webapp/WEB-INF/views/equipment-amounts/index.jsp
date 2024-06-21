@@ -20,15 +20,7 @@ List<EquipmentAmount> equipments = (List<EquipmentAmount>) request.getAttribute(
 <title>Liste des équipements</title>
 </head>
 <body>
-	<div class="flex justify-between p-3">
-
-		<div class="font-bold text-blue-600 font-mono">Boursify</div>
-
-		<div class="flex justify-between gap-3">
-			<a href="students/index.jsp"> Etudiants </a> <a> Montant </a> <a>
-				Paiement </a>
-		</div>
-	</div>
+	<jsp:include page="/WEB-INF/components/header.jsp" />
 
 	<main class="px-5 py-3">
 
@@ -40,7 +32,7 @@ List<EquipmentAmount> equipments = (List<EquipmentAmount>) request.getAttribute(
 			<div class="text-slate-600 mt-1">Retrouver ici la liste des
 				équipements</div>
 
-			<a href="equipment-amounts/new"
+			<a href="<%= request.getContextPath() %>/equipment-amounts/new"
 				class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Nouvel équipement</a>
 		</div>
 
@@ -67,9 +59,9 @@ List<EquipmentAmount> equipments = (List<EquipmentAmount>) request.getAttribute(
 				</div>
 
 				<div class="flex">
-					<a href="equipment-amounts/edit?amountId=<%= equipment.getId() %>"
+					<a href="<%= request.getContextPath() %>/equipment-amounts/edit?amountId=<%= equipment.getId() %>"
 						class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Modifier</a>
-					<a href="equipment-amounts/delete?amountId=<%= equipment.getId() %>"
+					<a href="<%= request.getContextPath() %>/equipment-amounts/delete?amountId=<%= equipment.getId() %>"
 						class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Supprimer</a>
 				</div>
 			</div>

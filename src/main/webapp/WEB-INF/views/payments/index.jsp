@@ -40,14 +40,7 @@ SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRE
 </head>
 
   <body>
-    <div class="flex justify-between p-3">
-      <div class="font-bold text-blue-600 font-mono">Boursify</div>
-
-      <div class="flex justify-between gap-3">
-        <a href="students/index.jsp"> Etudiants </a> <a> Montant </a>
-        <a> Paiement </a>
-      </div>
-    </div>
+	<jsp:include page="/WEB-INF/components/header.jsp" />
 
     <main class="px-5 py-3">
       <h1 class="text-3xl font-bold">Liste des paiements</h1>
