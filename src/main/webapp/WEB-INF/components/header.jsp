@@ -3,6 +3,7 @@
 
     <div class="flex justify-between gap-3">
         <a href="<%= request.getContextPath() + "/students" %>">Etudiants</a>
+        <a href="<%= request.getContextPath() + "/students/latecomers" %>">Retardataires</a>
         <a href="<%= request.getContextPath() + "/amounts" %>">Montants</a>
         <a href="<%= request.getContextPath() + "/equipment-amounts" %>">Equipements</a>
         <a href="<%= request.getContextPath() + "/payments" %>">Paiements</a>

@@ -23,6 +23,7 @@ import repository.level.LevelRepository;
 import repository.level.LevelRepositoryImpl;
 import repository.student.StudentRepository;
 import repository.student.StudentRepositoryImpl;
+import util.PaymentPeriod;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -31,7 +32,6 @@ import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Servlet implementation class StudentController
@@ -79,6 +79,9 @@ public class StudentController extends HttpServlet {
 				case "/delete":
 					deleteStudent(request, response);
 					break;
+				case "/latecomers":
+					listLateComers(request, response);
+					break;
 				default:
 					listStudents(request, response);
 					break;
@@ -102,6 +105,9 @@ public class StudentController extends HttpServlet {
 				case "/update":
 					updateStudent(request, response);
 					break;
+				case "/latecomers":
+					notifyLateComers(request, response);
+					break;
 				default:
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					break;
@@ -111,7 +117,6 @@ public class StudentController extends HttpServlet {
 		}
 	}
 
-	// TODO Create amountsAvailability Map<levelId, boolean>
 	private void listStudents(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Student> students = null;
@@ -190,6 +195,136 @@ public class StudentController extends HttpServlet {
 		request.setAttribute("student", student);
 		// Logic to show edit form
 		request.getRequestDispatcher("/WEB-INF/views/students/edit.jsp").forward(request, response);
+	}
+
+	private void listLateComers(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Integer academicSessionId = null;
+		PaymentPeriod paymentPeriod = null;
+
+		String rawAcademicSessionId = request.getParameter("academicSessionId");
+		if (rawAcademicSessionId != null && !rawAcademicSessionId.isEmpty()) {
+			academicSessionId = Integer.parseInt(rawAcademicSessionId);
+		} else {
+			academicSessionId = sessionRepository.getLatest().getId();
+		}
+
+		String rawPaymentPeriod = request.getParameter("paymentPeriod");
+		if (rawPaymentPeriod != null && !rawPaymentPeriod.isEmpty()) {
+			paymentPeriod = PaymentPeriod.valueOf(rawPaymentPeriod);
+		} else {
+			paymentPeriod = PaymentPeriod.EQUIPMENT;
+		}
+
+		if (rawAcademicSessionId == null || rawPaymentPeriod == null) {
+			response.sendRedirect(request.getContextPath() + "/students/latecomers?academicSessionId="
+					+ academicSessionId + "&paymentPeriod=" + paymentPeriod.toString());
+			return;
+		}
+
+		List<Student> students = studentRepository.getLatecomers(academicSessionId, paymentPeriod);
+		List<AcademicSession> academicSessions = sessionRepository.getSessions();
+
+		request.setAttribute("students", students);
+		request.setAttribute("academicSessions", academicSessions);
+		request.setAttribute("academicSessionId", academicSessionId);
+		request.setAttribute("paymentPeriod", paymentPeriod);
+
+		request.getRequestDispatcher("/WEB-INF/views/students/latecomers.jsp").forward(request, response);
+	}
+
+	private void notifyLateComers(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Integer academicSessionId = null;
+		PaymentPeriod paymentPeriod = null;
+
+		String rawAcademicSessionId = request.getParameter("academicSessionId");
+		if (rawAcademicSessionId != null && !rawAcademicSessionId.isEmpty()) {
+			academicSessionId = Integer.parseInt(rawAcademicSessionId);
+		} else {
+			academicSessionId = sessionRepository.getLatest().getId();
+		}
+
+		String rawPaymentPeriod = request.getParameter("paymentPeriod");
+		if (rawPaymentPeriod != null && !rawPaymentPeriod.isEmpty()) {
+			paymentPeriod = PaymentPeriod.valueOf(rawPaymentPeriod);
+		} else {
+			paymentPeriod = PaymentPeriod.EQUIPMENT;
+		}
+
+		if (rawAcademicSessionId == null || rawPaymentPeriod == null) {
+			response.sendRedirect(request.getContextPath() + "/students/latecomers?academicSessionId="
+					+ academicSessionId + "&paymentPeriod=" + paymentPeriod.toString());
+			return;
+		}
+
+		List<Student> students = studentRepository.getLatecomers(academicSessionId, paymentPeriod);
+
+		sendEmailToLatecomers(students, academicSessionId, paymentPeriod);
+
+		request.setAttribute("students", students);
+
+		response.sendRedirect(request.getContextPath() + "/students/latecomers?academicSessionId="
+				+ academicSessionId + "&paymentPeriod=" + paymentPeriod.toString());
+	}
+
+	private void sendEmailToLatecomers(List<Student> students, Integer academicSessionId, PaymentPeriod paymentPeriod) {
+		System.out.println("Send emails");
+
+		List<String> emails = students.stream().map(student -> student.getEmail()).toList();
+
+		String template = """
+				<!DOCTYPE html>
+				<html lang="fr">
+				  <head>
+				    <meta charset="UTF-8" />
+				    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+				    <title>Notification de Bourse d'Étude</title>
+				  </head>
+				  <body
+				    style="
+				      font-family: Arial, sans-serif;
+				      line-height: 1.6;
+				      background-color: #f4f4f4;
+				      padding: 20px;
+				    "
+				  >
+				    <div
+				      style="
+				        max-width: 600px;
+				        margin: 0 auto;
+				        background-color: #fff;
+				        padding: 20px;
+				        border: 1px solid #ddd;
+				        border-radius: 5px;
+				      "
+				    >
+				      <h2 style="color: #333">Notification Importante</h2>
+				      <p style="color: #333">Cher(e) étudiant(e),</p>
+				      <p style="color: #333">
+				        Nous tenons à vous informer qu'il vous reste trois semaines pour
+				        récupérer votre bourse d'étude pour le mois de {1} de l'année universitaire {2}.
+				      </p>
+				      <p style="color: #333">
+				        Veuillez vous assurer de compléter toutes les démarches nécessaires
+				        avant la date limite afin de garantir le versement de votre bourse.
+				      </p>
+				      <p style="color: #333">
+				        Si vous avez des questions ou besoin d'assistance, n'hésitez pas à
+				        contacter notre service d'assistance aux étudiants.
+				      </p>
+				      <p style="color: #333">Cordialement,</p>
+				      <p style="color: #333">L'équipe des Bourses d'Étude</p>
+				    </div>
+				  </body>
+				</html>
+				""";
+
+		String body = template.replace("{1}", paymentPeriod.getLabel()).replace("{2}",
+				sessionRepository.getById(academicSessionId).getYear() + " - " + (sessionRepository
+						.getById(academicSessionId).getYear() + 1));
+
+		// TODO send emails
 	}
 
 	private void insertStudent(HttpServletRequest request, HttpServletResponse response)
