@@ -32,7 +32,7 @@ int uniqueId = random.nextInt();
 </head>
 <body>
 	<jsp:include page="/WEB-INF/components/header.jsp" />
-    
+
     <main class="px-3 py-5 sm:px-40 md:px-60 lg:px-80">
 		<h1 class="text-3xl font-medium">Modifier le paiement de la bourse</h1>
 		<p class="mb-5 text-slate-600">Veuillez remplir les champs
@@ -146,34 +146,5 @@ int uniqueId = random.nextInt();
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-
-		<h1>Edit payment</h1>
-
-        <div><%= payment.getId() %></div>
-        <div><%= usedPaymentPeriods.toString() %></div>
-        <div><%= disabledPaymentPeriods.toString() %></div>
-
-    <form method="POST" action="<%= request.getContextPath() + "/payments/update?paymentId=" + payment.getId() %>">
-
-        <% for (PaymentPeriod paymentPeriod : PaymentPeriod.values() ) { %>
-            <% if (disabledPaymentPeriods.contains(paymentPeriod)) { %>
-                <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>" name="disabledPaymentPeriods" value="<%= paymentPeriod %>" checked="" disabled="">
-            <% } else if (usedPaymentPeriods.contains(paymentPeriod)) { %>
-                <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>" name="paymentPeriods" value="<%= paymentPeriod %>" checked="">
-            <% } else { %>
-                <input type="checkbox" id="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>" name="paymentPeriods" value="<%= paymentPeriod %>">
-            <% } %>
-            <label for="PaymentPeriod.<%= paymentPeriod.toString() + "." + uniqueId %>">
-                <%= paymentPeriod.getLabel() %>
-                <% if (paymentPeriod == PaymentPeriod.EQUIPMENT) { %>
-                    <span><%= equipmentAmount.getValue() %></span>
-                <% } else { %>
-                    <span><%= monthAmount.getValue() %></span>
-                <% } %> Ar
-            </label><br>
-        <% } %>
-
-        <input type="Submit" />
-    </form>
 </body>
 </html>

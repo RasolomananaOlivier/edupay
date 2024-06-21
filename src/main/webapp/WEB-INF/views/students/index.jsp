@@ -2,6 +2,7 @@
 <%@page import="model.Faculty"%>
 <%@page import="model.Level"%>
 <%@page import="model.Student"%>
+<%@page import="util.DateFormatter"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -184,7 +185,7 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Date de naissance</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getBirthDate()%></div>
+						<div class="font-semibold text-slate-800"><%= DateFormatter.format(students.get(i).getBirthDate())%></div>
 					</div>
 
 					<div class="flex flex-col">

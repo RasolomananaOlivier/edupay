@@ -144,7 +144,7 @@ SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRE
 				<input type="checkbox" id="toggleCheckbox.<%= payment.getId() %>" class="hidden" />
 				<label
 					for="toggleCheckbox.<%= payment.getId() %>"
-					class="cursor-pointer py-2 rounded hover:underline hover:text-blue-500 focus:outline-none"
+					class="cursor-pointer font-semibold py-2 rounded hover:underline hover:text-blue-500 focus:outline-none"
 				>
 					<!-- Empty label, text will be added by CSS -->
 				</label>
