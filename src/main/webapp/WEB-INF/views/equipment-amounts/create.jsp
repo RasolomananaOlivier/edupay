@@ -4,6 +4,7 @@
 	pageEncoding="UTF-8"%>
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
+List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledLevelIds");
 %>
 <!DOCTYPE html>
 <html>
@@ -37,13 +38,16 @@ List<Level> levels = (List<Level>) request.getAttribute("levels");
 					<select id="countries" name="level" required
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
-						for (Level level : levels) {
+							for (Level level : levels) {
 						%>
-						<option value="<%=level.getId()%>">
-							<%=level.getName()%>
-						</option>
+							<option
+								value="<%=level.getId()%>"
+								<%= disabledLevelIds.contains(level.getId()) ? "disabled" : "" %>
+							>
+								<%=level.getName()%>
+							</option>
 						<%
-						}
+							}
 						%>
 					</select>
 				</div>
@@ -53,7 +57,7 @@ List<Level> levels = (List<Level>) request.getAttribute("levels");
 						class="mb-2 block text-sm font-medium text-gray-900">Montant</label>
 					<input type="number" id="amountValue" name="amountValue"
 						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="22,000" required />
+						placeholder="22,000" required min="1" step="1" />
 				</div>
 			</div>
 

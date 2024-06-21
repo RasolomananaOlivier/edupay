@@ -6,6 +6,7 @@
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 MonthAmount amount = (MonthAmount) request.getAttribute("amount");
+List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledLevelIds");
 %>
 <!DOCTYPE html>
 <html>
@@ -39,13 +40,17 @@ MonthAmount amount = (MonthAmount) request.getAttribute("amount");
 					<select id="countries" name="level" required
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
-						for (Level level : levels) {
+							for (Level level : levels) {
 						%>
-						<option <%= level.getId() == amount.getLevelId() ? "selected" : "" %> value="<%=level.getId()%>">
-							<%=level.getName()%>
-						</option>
+							<option
+								value="<%=level.getId()%>"
+								<%= level.getId() == amount.getLevelId() ? "selected" : "" %>
+								<%= disabledLevelIds.contains(level.getId()) ? "disabled" : "" %>
+							>
+								<%=level.getName()%>
+							</option>
 						<%
-						}
+							}
 						%>
 					</select>
 				</div>
