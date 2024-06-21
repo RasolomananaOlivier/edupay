@@ -1,5 +1,6 @@
 <%@page import="model.EquipmentAmount"%>
 <%@page import="java.util.List"%>
+<%@page import="util.CurrencyFormatter"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -61,7 +62,7 @@ List<EquipmentAmount> equipments = (List<EquipmentAmount>) request.getAttribute(
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Montant</div>
-						<div class="font-semibold text-slate-800"><%= equipment.getValue() %> AR</div>
+						<div class="font-semibold text-slate-800"><%= CurrencyFormatter.format(equipment.getValue()) %></div>
 					</div>
 				</div>
 

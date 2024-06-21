@@ -1,4 +1,5 @@
 <%@page import="model.MonthAmount"%>
+<%@page import="util.CurrencyFormatter"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -61,7 +62,7 @@ List<MonthAmount> monthAmounts = (List<MonthAmount>) request.getAttribute("month
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Montant</div>
-						<div class="font-semibold text-slate-800"><%= amount.getValue() %> AR</div>
+						<div class="font-semibold text-slate-800"><%= CurrencyFormatter.format(amount.getValue()) %></div>
 					</div>
 				</div>
 
