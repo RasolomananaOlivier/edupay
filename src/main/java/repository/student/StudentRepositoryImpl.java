@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 import database.Database;
 import model.Student;
+import util.PaymentPeriod;
 
 /**
  * 
@@ -190,5 +191,51 @@ public class StudentRepositoryImpl implements StudentRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public List<Student> getLatecomers(Integer academicSessionId, PaymentPeriod paymentPeriod) {
+		String sql = """
+				SELECT *
+				FROM "Student"
+				    INNER JOIN "Level" ON "Student"."levelId" = "Level"."id"
+				    INNER JOIN "AcademicSession" ON "Student"."academicSessionId" = "AcademicSession"."id"
+				    INNER JOIN "Faculty" ON "Student"."facultyId" = "Faculty"."id"
+				WHERE ("public"."Student"."id") NOT IN (
+				        SELECT "t1"."studentId"
+				        FROM "public"."Payment" AS "t1"
+				        WHERE (
+				                "t1"."academicSessionId" = ?
+				                AND ("t1"."id") IN (
+				                    SELECT "t2"."paymentId"
+				                    FROM "public"."PaymentItem" AS "t2"
+				                    WHERE (
+				                            "t2"."period" = CAST(?::text AS "public"."PaymentPeriod")
+				                            AND "t2"."paymentId" IS NOT NULL
+				                        )
+				                )
+				                AND "t1"."studentId" IS NOT NULL
+				            )
+				    )
+				""";
+
+		List<Student> students = new ArrayList<>();
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, academicSessionId);
+			preparedStatement.setString(2, paymentPeriod.toString());
+
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				Student student = Student.fromResultSet(resultSet);
+				students.add(student);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return students;
 	}
 }

@@ -1,9 +1,9 @@
 package repository.student;
 
 import java.util.List;
-import java.util.Map;
 
 import model.Student;
+import util.PaymentPeriod;
 
 public interface StudentRepository {
 
@@ -12,6 +12,8 @@ public interface StudentRepository {
 	Student getStudent(String id);
 
 	List<Student> getAllStudents(String name, Boolean isMinor, Integer levelId, Integer facultyId);
+
+	List<Student> getLatecomers(Integer academicSessionId, PaymentPeriod paymentPeriod);
 
 	void updateStudent(Student student);
 

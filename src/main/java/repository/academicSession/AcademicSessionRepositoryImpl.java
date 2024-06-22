@@ -1,6 +1,7 @@
 package repository.academicSession;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -41,4 +42,56 @@ public class AcademicSessionRepositoryImpl implements AcademicSessionRepository 
 		return sessions;
 	}
 
+	@Override
+	public AcademicSession getLatest() {
+		AcademicSession result = null;
+
+		try {
+			String sql = """
+						SELECT * FROM "AcademicSession"
+						ORDER BY "public"."AcademicSession"."id" DESC
+						LIMIT 1
+					""";
+
+			Statement st = connection.createStatement();
+
+			ResultSet resultSet = st.executeQuery(sql);
+
+			while (resultSet.next()) {
+				AcademicSession session = AcademicSession.fromResultSet(resultSet);
+
+				result = session;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	@Override
+	public AcademicSession getById(Integer id) {
+		AcademicSession result = null;
+
+		try {
+			String sql = """
+						SELECT * FROM "AcademicSession"
+						WHERE "public"."AcademicSession"."id" = ?
+					""";
+
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setInt(1, id);
+			ResultSet resultSet = st.executeQuery();
+
+			while (resultSet.next()) {
+				AcademicSession session = AcademicSession.fromResultSet(resultSet);
+
+				result = session;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
 }
