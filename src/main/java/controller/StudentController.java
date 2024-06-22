@@ -23,6 +23,7 @@ import repository.level.LevelRepository;
 import repository.level.LevelRepositoryImpl;
 import repository.student.StudentRepository;
 import repository.student.StudentRepositoryImpl;
+import util.Mail;
 import util.PaymentPeriod;
 
 import java.io.IOException;
@@ -323,8 +324,10 @@ public class StudentController extends HttpServlet {
 		String body = template.replace("{1}", paymentPeriod.getLabel()).replace("{2}",
 				sessionRepository.getById(academicSessionId).getYear() + " - " + (sessionRepository
 						.getById(academicSessionId).getYear() + 1));
-
-		// TODO send emails
+		
+		for (String email : emails) {
+			Mail.send(body, email);
+		}
 	}
 
 	private void insertStudent(HttpServletRequest request, HttpServletResponse response)
