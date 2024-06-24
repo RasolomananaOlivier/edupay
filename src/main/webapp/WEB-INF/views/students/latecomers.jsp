@@ -1,13 +1,11 @@
-<%@page import="model.AcademicSession"%>
-<%@page import="model.Faculty"%>
-<%@page import="model.Level"%>
-<%@page import="model.Student"%>
-<%@page import="util.PaymentPeriod"%>
-<%@page import="util.DateFormatter"%>
+<%@page import="com.edupay.model.AcademicSession"%>
+<%@page import="com.edupay.model.Student"%>
+<%@page import="com.edupay.util.PaymentPeriod"%>
+<%@page import="com.edupay.util.DateFormatter"%>
 <%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page import="java.util.Objects" %>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 
 <%
 List<Student> students = (List<Student>) request.getAttribute("students");
@@ -49,7 +47,7 @@ Integer selectedAcademicSessionId = (Integer) request.getAttribute("academicSess
 						%>
 							<option
 								value="<%= academicSession.getId() %>"
-								<%= academicSession.getId() == selectedAcademicSessionId ? "selected" : "" %>
+								<%=Objects.equals(academicSession.getId(), selectedAcademicSessionId) ? "selected" : "" %>
 							>
 								<%= academicSession.getYear() + " - " + (academicSession.getYear() + 1) %>
 							</option>

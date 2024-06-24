@@ -1,10 +1,11 @@
-<%@page import="model.Student"%>
-<%@page import="model.AcademicSession"%>
-<%@page import="model.Faculty"%>
-<%@page import="model.Level"%>
+<%@page import="com.edupay.model.Student"%>
+<%@page import="com.edupay.model.AcademicSession"%>
+<%@page import="com.edupay.model.Faculty"%>
+<%@page import="com.edupay.model.Level"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page import="java.util.Objects" %>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
@@ -72,7 +73,7 @@ Student student = (Student) request.getAttribute("student");
 					<div class="flex items-center gap-4">
 						<div class="flex items-center">
 							<input id="default-radio-1" name="gender" type="radio"
-								<%=student.getGender().name() == "MALE" ? "checked='checked'" : ""%>
+								<%=student.getGender().name().equals("MALE") ? "checked='checked'" : ""%>
 								value="MALE" name="default-radio"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-1"
@@ -81,7 +82,7 @@ Student student = (Student) request.getAttribute("student");
 						<div class="flex items-center">
 							<input id="default-radio-2" name="gender" type="radio"
 								value="FEMALE" name="default-radio"
-								<%=student.getGender().name() == "FEMALE" ? "checked='checked'" : ""%>
+								<%=student.getGender().name().equals("FEMALE") ? "checked='checked'" : ""%>
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-2"
 								class="ms-2 text-sm font-medium text-gray-900">Femme</label>
@@ -92,14 +93,14 @@ Student student = (Student) request.getAttribute("student");
 				<div>
 					<label for="first_name"
 						class="mb-2 block text-sm font-medium text-gray-900">Institution</label>
-					<select id="countries" name="faculty"
+					<select id="first_name" name="faculty"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 
 						<%
 						for (Faculty faculty : faculties) {
 						%>
 						<option
-							<%= student.getFacultyId() == faculty.getId() ? "selected" : ""%>
+							<%=Objects.equals(student.getFacultyId(), faculty.getId()) ? "selected" : ""%>
 							value="<%=faculty.getId()%>">
 							<%=faculty.getName()%>
 						</option>
@@ -112,13 +113,13 @@ Student student = (Student) request.getAttribute("student");
 				<div>
 					<label for="level"
 						class="mb-2 block text-sm font-medium text-gray-900">Niveau</label>
-					<select id="countries" name="level"
+					<select id="level" name="level"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
 						for (Level level : levels) {
 						%>
 						<option value="<%=level.getId()%>"
-						<%= student.getLevelId() == level.getId() ? "selected" : ""%>
+						<%=Objects.equals(student.getLevelId(), level.getId()) ? "selected" : ""%>
 						>
 							<%=level.getName()%>
 						</option>
@@ -137,7 +138,7 @@ Student student = (Student) request.getAttribute("student");
 						for (AcademicSession academicSession : sessions) {
 						%>
 						<option value="<%=academicSession.getId()%>" 
-						<%= student.getAcademicSessionId() == academicSession.getId() ? "selected" : ""%>
+						<%=Objects.equals(student.getAcademicSessionId(), academicSession.getId()) ? "selected" : ""%>
 						>
 							<%=academicSession.getYear()%>
 						</option>
@@ -155,8 +156,6 @@ Student student = (Student) request.getAttribute("student");
 
 		</form>
 	</main>
-
-
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

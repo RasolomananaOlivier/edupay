@@ -1,8 +1,9 @@
-<%@page import="model.MonthAmount"%>
-<%@page import="model.Level"%>
+<%@page import="com.edupay.model.MonthAmount"%>
+<%@page import="com.edupay.model.Level"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page import="java.util.Objects" %>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 MonthAmount amount = (MonthAmount) request.getAttribute("amount");
@@ -28,7 +29,7 @@ List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledL
 
 		<form action="update" method="post">
 			<div class="mb-6 flex flex-col gap-5">
-			<input type="text" name="amountId" 
+			<input type="hidden" name="amountId"
 						class="hidden"
 						value=<%= amount.getId() %>
 						required />
@@ -36,14 +37,14 @@ List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledL
 				<div>
 					<label for="level"
 						class="mb-2 block text-sm font-medium text-gray-900">Niveau</label>
-					<select id="countries" name="level" required
+					<select id="level" name="level" required
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
 							for (Level level : levels) {
 						%>
 							<option
 								value="<%=level.getId()%>"
-								<%= level.getId() == amount.getLevelId() ? "selected" : "" %>
+								<%=Objects.equals(level.getId(), amount.getLevelId()) ? "selected" : "" %>
 								<%= disabledLevelIds.contains(level.getId()) ? "disabled" : "" %>
 							>
 								<%=level.getName()%>
@@ -70,8 +71,6 @@ List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledL
 
 		</form>
 	</main>
-
-
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

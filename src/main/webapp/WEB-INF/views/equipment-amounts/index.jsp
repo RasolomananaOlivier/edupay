@@ -1,13 +1,12 @@
-<%@page import="model.EquipmentAmount"%>
+<%@page import="com.edupay.model.EquipmentAmount"%>
 <%@page import="java.util.List"%>
-<%@page import="util.CurrencyFormatter"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page import="com.edupay.util.CurrencyFormatter"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 
 <%
 List<EquipmentAmount> equipments = (List<EquipmentAmount>) request.getAttribute("equipments");
 %>
-
 
 <!DOCTYPE html>
 <html>

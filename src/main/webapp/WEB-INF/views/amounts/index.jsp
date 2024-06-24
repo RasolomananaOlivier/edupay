@@ -1,13 +1,12 @@
-<%@page import="model.MonthAmount"%>
-<%@page import="util.CurrencyFormatter"%>
+<%@page import="com.edupay.model.MonthAmount"%>
+<%@page import="com.edupay.util.CurrencyFormatter"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 
 <%
 List<MonthAmount> monthAmounts = (List<MonthAmount>) request.getAttribute("monthAmounts");
 %>
-
 
 <!DOCTYPE html>
 <html>
