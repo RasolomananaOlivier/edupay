@@ -1,12 +1,11 @@
-<%@page import="model.PaymentItem"%>
-<%@page import="model.Payment"%>
-<%@page import="util.CurrencyFormatter"%>
+<%@page import="com.edupay.model.PaymentItem"%>
+<%@page import="com.edupay.model.Payment"%>
+<%@page import="com.edupay.util.CurrencyFormatter"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 
 <%
 List<Payment> payments = (List<Payment>) request.getAttribute("payments");
@@ -135,7 +134,7 @@ SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRE
 
             <div class="flex flex-col">
               <div class="text-sm text-slate-700">Total</div>
-              <div class="font-semibold text-slate-800"><%= CurrencyFormatter.format(payment.getPaymentItems().stream().mapToInt(paymentItem -> paymentItem.getAmount()).sum()) %></div>
+              <div class="font-semibold text-slate-800"><%= CurrencyFormatter.format(payment.getPaymentItems().stream().mapToInt(PaymentItem::getAmount).sum()) %></div>
             </div>
           </div>
 
@@ -171,7 +170,7 @@ SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRE
 							%>
 							<tr class="">
 								<td class="border border-slate-500 bg-slate-500 text-white px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</td>
-								<td class="border border-slate-500 text-right font-semibold"><%= CurrencyFormatter.format(payment.getPaymentItems().stream().mapToInt(paymentItem -> paymentItem.getAmount()).sum()) %></td>
+								<td class="border border-slate-500 text-right font-semibold"><%= CurrencyFormatter.format(payment.getPaymentItems().stream().mapToInt(PaymentItem::getAmount).sum()) %></td>
 							</tr>
 						</tbody>
 					</table>

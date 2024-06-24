@@ -1,9 +1,9 @@
-<%@page import="model.AcademicSession"%>
-<%@page import="model.Faculty"%>
-<%@page import="model.Level"%>
+<%@page import="com.edupay.model.AcademicSession"%>
+<%@page import="com.edupay.model.Faculty"%>
+<%@page import="com.edupay.model.Level"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
@@ -67,14 +67,14 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 					<div class="flex items-center gap-4">
 						<div class="flex items-center">
 							<input checked id="default-radio-1" name="gender" type="radio"
-								value="MALE" name="default-radio"
+								value="MALE"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-1"
 								class="ms-2 text-sm font-medium text-gray-900">Homme</label>
 						</div>
 						<div class="flex items-center">
 							<input id="default-radio-2" name="gender" type="radio"
-								value="FEMALE" name="default-radio"
+								value="FEMALE"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500" />
 							<label for="default-radio-2"
 								class="ms-2 text-sm font-medium text-gray-900">Femme</label>
@@ -85,7 +85,7 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 				<div>
 					<label for="first_name"
 						class="mb-2 block text-sm font-medium text-gray-900">Institution</label>
-					<select id="countries" name="faculty"
+					<select id="first_name" name="faculty"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 
 						<%
@@ -103,7 +103,7 @@ List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("a
 				<div>
 					<label for="level"
 						class="mb-2 block text-sm font-medium text-gray-900">Niveau</label>
-					<select id="countries" name="level"
+					<select id="level" name="level"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
 						for (Level level : levels) {

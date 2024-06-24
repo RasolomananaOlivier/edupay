@@ -1,13 +1,13 @@
-<%@page import="model.Payment"%>
-<%@page import="util.PaymentPeriod"%>
-<%@page import="model.MonthAmount"%>
-<%@page import="model.EquipmentAmount"%>
+<%@page import="com.edupay.model.Payment"%>
+<%@page import="com.edupay.util.PaymentPeriod"%>
+<%@page import="com.edupay.model.MonthAmount"%>
+<%@page import="com.edupay.model.EquipmentAmount"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Random"%>
-<%@page import="util.CurrencyFormatter"%>
-<%@page import="util.DateFormatter"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@page import="com.edupay.util.CurrencyFormatter"%>
+<%@page import="com.edupay.util.DateFormatter"%>
+<%@ page contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 
 <%
 Payment payment = (Payment) request.getAttribute("payment");

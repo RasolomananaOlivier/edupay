@@ -1,14 +1,12 @@
-<%@page import="model.PaymentItem"%>
-<%@page import="model.Student"%>
-<%@page import="model.MonthAmount"%>
-<%@page import="model.EquipmentAmount"%>
-<%@page import="util.PaymentPeriod"%>
-<%@page import="model.AcademicSession"%>
-<%@page import="util.CurrencyFormatter"%>
-<%@page import="util.DateFormatter"%>
+<%@page import="com.edupay.model.Student"%>
+<%@page import="com.edupay.model.MonthAmount"%>
+<%@page import="com.edupay.model.EquipmentAmount"%>
+<%@page import="com.edupay.util.PaymentPeriod"%>
+<%@page import="com.edupay.util.CurrencyFormatter"%>
+<%@page import="com.edupay.util.DateFormatter"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 
 <%
 Student student = (Student) request.getAttribute("student");

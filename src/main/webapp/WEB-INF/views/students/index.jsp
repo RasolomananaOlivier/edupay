@@ -1,18 +1,18 @@
-<%@page import="model.AcademicSession"%>
-<%@page import="model.Faculty"%>
-<%@page import="model.Level"%>
-<%@page import="model.Student"%>
-<%@page import="util.DateFormatter"%>
+<%@page import="com.edupay.model.AcademicSession"%>
+<%@page import="com.edupay.model.Faculty"%>
+<%@page import="com.edupay.model.Level"%>
+<%@page import="com.edupay.model.Student"%>
+<%@page import="com.edupay.util.DateFormatter"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page import="java.util.Objects" %>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 
 <%
 List<Student> students = (List<Student>) request.getAttribute("students");
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Faculty> faculties = (List<Faculty>) request.getAttribute("faculties");
-List<AcademicSession> sessions = (List<AcademicSession>) request.getAttribute("academicSessions");
 Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request.getAttribute("levelAmountsAvailability");
 %>
 <!DOCTYPE html>
@@ -47,7 +47,7 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 
 				<div class="mt-3 flex gap-2 items-center">
 					<input type="search" id="first_name" name="q"
-						value="<%=request.getParameter("q") != null && request.getParameter("q") != "" ? request.getParameter("q") : ""%>"
+						value="<%=request.getParameter("q") != null && !Objects.equals(request.getParameter("q"), "") ? request.getParameter("q") : ""%>"
 						class="bg-gray block w-full rounded-full border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
 						placeholder="Entrez le nom d'un étudiant" />
 					<div>
@@ -70,9 +70,9 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 					</div>
 
 					<div>
-						<label for="countries"
+						<label for="levels"
 							class="block mb-2 text-sm font-medium text-gray-900">Niveau</label>
-						<select id="countries" name="levelId"
+						<select id="levels" name="levelId"
 							class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
 							<option value="all">Tout</option>
 							
@@ -84,14 +84,14 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 							try {
 								levelId = Integer.parseInt(selectedLevel); 
 							} catch(Exception e) {
-								
-							}							
+								e.printStackTrace();
+							}
 							%>
 							
 							<%
 							for (Level level : levels) {
 							%>
-							<option <%= levelId != null && levelId == level.getId() ? "selected" : ""%> value="<%=level.getId()%>">
+							<option <%= levelId != null && levelId.equals(level.getId()) ? "selected" : ""%> value="<%=level.getId()%>">
 								<%=level.getName()%>
 							</option>
 							<%
@@ -115,14 +115,14 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 							try {
 								facultyId = Integer.parseInt(selectedFaculty); 
 							} catch(Exception e) {
-								
+								e.printStackTrace();
 							}							
 							%>
 							
 							<%
 							for (Faculty faculty : faculties) {
 							%>
-							<option  <%= facultyId != null && facultyId == faculty.getId() ? "selected" : ""%> value="<%=faculty.getId()%>">
+							<option  <%= facultyId != null && facultyId.equals(faculty.getId()) ? "selected" : ""%> value="<%=faculty.getId()%>">
 								<%=faculty.getName()%>
 							</option>
 							<%
@@ -148,24 +148,24 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 
 		<div class="flex flex-col gap-4 pt-5">
 			<%
-			for (int i = 0; i < students.size(); i++) {
+			for (Student student:  students) {
 			%>
 
 			<div class="flex flex-col gap-5 rounded-md border p-5">
 				<div class="flex justify-between">
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">N° matricule</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getId()%></div>
+						<div class="font-semibold text-slate-800"><%=student.getId()%></div>
 					</div>
 
 					<div class="flex gap-1">
-						<% if (levelAmountsAvailability.get(students.get(i).getLevelId()) == true) { %>
-							<a href="<%= request.getContextPath() %>/payments/new?studentId=<%=students.get(i).getId()%>"
+						<% if (levelAmountsAvailability.get(student.getLevelId())) { %>
+							<a href="<%= request.getContextPath() %>/payments/new?studentId=<%=student.getId()%>"
 								class="mb-2 me-2 rounded-full bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Payer</a>
 						<% } %>
-						<a href="<%= request.getContextPath() %>/students/edit?studentId=<%=students.get(i).getId()%>"
+						<a href="<%= request.getContextPath() %>/students/edit?studentId=<%=student.getId()%>"
 							class="mb-2 me-2 rounded-full bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Modifier</a>
-						<a href="<%= request.getContextPath() %>/students/delete?studentId=<%=students.get(i).getId()%>"
+						<a href="<%= request.getContextPath() %>/students/delete?studentId=<%=student.getId()%>"
 							class="mb-2 me-2 rounded-full border border-red-700 px-5 py-2.5 text-center text-sm font-medium text-red-700 hover:bg-red-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white dark:focus:ring-red-900">Supprimer</a>
 					</div>
 				</div>
@@ -173,24 +173,24 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 				<div class="flex flex-col">
 					<div class="text-sm text-slate-700">Nom</div>
 					<div class="font-semibold text-slate-800">
-						<%=students.get(i).getName()%>
+						<%=student.getName()%>
 					</div>
 				</div>
 
 				<div class="flex gap-10">
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Email</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getEmail()%></div>
+						<div class="font-semibold text-slate-800"><%=student.getEmail()%></div>
 					</div>
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Date de naissance</div>
-						<div class="font-semibold text-slate-800"><%= DateFormatter.format(students.get(i).getBirthDate())%></div>
+						<div class="font-semibold text-slate-800"><%= DateFormatter.format(student.getBirthDate())%></div>
 					</div>
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Sexe</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getGender().getLabel()%>
+						<div class="font-semibold text-slate-800"><%=student.getGender().getLabel()%>
 						</div>
 					</div>
 				</div>
@@ -198,21 +198,21 @@ Map<Integer, Boolean> levelAmountsAvailability = (Map<Integer, Boolean>) request
 				<div class="flex gap-10">
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Institution</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getFaculty().getName()%>
+						<div class="font-semibold text-slate-800"><%=student.getFaculty().getName()%>
 						</div>
 					</div>
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Niveau</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getLevel().getName()%>
+						<div class="font-semibold text-slate-800"><%=student.getLevel().getName()%>
 						</div>
 					</div>
 
 					<div class="flex flex-col">
 						<div class="text-sm text-slate-700">Année universitaire</div>
-						<div class="font-semibold text-slate-800"><%=students.get(i).getSession().getYear()%>
+						<div class="font-semibold text-slate-800"><%=student.getSession().getYear()%>
 							-
-							<%=students.get(i).getSession().getYear() + 1%>
+							<%=student.getSession().getYear() + 1%>
 						</div>
 					</div>
 				</div>

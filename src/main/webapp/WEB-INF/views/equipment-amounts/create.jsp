@@ -1,7 +1,7 @@
-<%@page import="model.Level"%>
+<%@page import="com.edupay.model.Level"%>
 <%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 <%
 List<Level> levels = (List<Level>) request.getAttribute("levels");
 List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledLevelIds");
@@ -26,18 +26,10 @@ List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledL
 
 		<form action="store" method="post">
 			<div class="mb-6 flex flex-col gap-5">
-				<!-- <div>
-					<label for="amountId"
-						class="mb-2 block text-sm font-medium text-gray-900">Identifiant</label> 
-						<input type="text" id="amountId" name="amountId"
-						class="bg-gray block w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-						placeholder="2413" required />
-				</div> -->
-
 				<div>
 					<label for="level"
 						class="mb-2 block text-sm font-medium text-gray-900">Niveau</label>
-					<select id="countries" name="level" required
+					<select id="level" name="level" required
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
 						<%
 							for (Level level : levels) {
@@ -70,8 +62,6 @@ List<Integer> disabledLevelIds = (List<Integer>) request.getAttribute("disabledL
 			
 		</form>
 	</main>
-
-
 
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
